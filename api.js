@@ -32,37 +32,37 @@
 
 
 (function (window, document) {
-    window['Asc']['Addons'] = window['Asc']['Addons'] || {};
-    window['Asc']['Addons']['sheet_views'] = true; // register addon
+	window['Asc']['Addons'] = window['Asc']['Addons'] || {};
+	window['Asc']['Addons']['sheet_views'] = true; // register addon
 
-    var asc = window["Asc"];
-    var prot;
-    asc["spreadsheet_api"] = spreadsheet_api;
-    prot = spreadsheet_api.prototype;
+	var asc = window["Asc"];
+	var prot;
+	asc["spreadsheet_api"] = spreadsheet_api;
+	prot = spreadsheet_api.prototype;
 
-    spreadsheet_api.prototype.asc_addNamedSheetView = function (name, bSave) {
-        var ws = this.wb && this.wb.getWorksheet();
-        if (ws) {
-            return ws.addNamedSheetView(name, bSave);
-        }
-    };
+	spreadsheet_api.prototype.asc_addNamedSheetView = function (name, bSave) {
+		var ws = this.wb && this.wb.getWorksheet();
+		if (ws) {
+			return ws.addNamedSheetView(name, bSave);
+		}
+	};
 
-    spreadsheet_api.prototype.asc_getNamedSheetViews = function () {
-        var ws = this.wb && this.wb.getWorksheet();
-        if (ws) {
-            return ws.getNamedSheetViews();
-        }
-    };
+	spreadsheet_api.prototype.asc_getNamedSheetViews = function () {
+		var ws = this.wb && this.wb.getWorksheet();
+		if (ws) {
+			return ws.getNamedSheetViews();
+		}
+	};
 
-    spreadsheet_api.prototype.asc_deleteNamedSheetViews = function (arr) {
-        var ws = this.wb && this.wb.getWorksheet();
-        if (ws) {
-            return ws.deleteNamedSheetViews(arr);
-        }
-    };
+	spreadsheet_api.prototype.asc_deleteNamedSheetViews = function (arr) {
+		var ws = this.wb && this.wb.getWorksheet();
+		if (ws) {
+			return ws.deleteNamedSheetViews(arr);
+		}
+	};
 
 
-    prot["asc_addNamedSheetView"] = prot.asc_addNamedSheetView;
-    prot["asc_getNamedSheetViews"] = prot.asc_getNamedSheetViews;
-    prot["asc_deleteNamedSheetViews"] = prot.asc_deleteNamedSheetViews;
+	prot["asc_addNamedSheetView"] = prot.asc_addNamedSheetView;
+	prot["asc_getNamedSheetViews"] = prot.asc_getNamedSheetViews;
+	prot["asc_deleteNamedSheetViews"] = prot.asc_deleteNamedSheetViews;
 })(window, window.document);
