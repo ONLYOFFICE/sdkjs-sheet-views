@@ -1,0 +1,10 @@
+{
+  "sdk": {
+    "min": [
+      "api.js"
+    ],
+    "common": [
+      "namedSheetViews.js"
+    ]
+  }
+}
