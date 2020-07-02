@@ -52,8 +52,12 @@
 			if (!success) {
 				return;
 			}
+			History.Create_NewPoint();
+			History.StartTransaction();
 
 			wsModel.addNamedSheetView(name, bSave);
+
+			History.EndTransaction();
 		};
 
 		if (bSave) {
@@ -86,8 +90,12 @@
 			if (!success) {
 				return;
 			}
+			History.Create_NewPoint();
+			History.StartTransaction();
 
 			wsModel.deleteNamedSheetViews(arr);
+
+			History.EndTransaction();
 		};
 
 		//TODO lock

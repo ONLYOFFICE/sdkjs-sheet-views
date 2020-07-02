@@ -4,7 +4,8 @@
       "api.js"
     ],
     "common": [
-      "namedSheetViews.js"
+      "NamedSheetViews.js",
+      "UndoRedo.js"
     ]
   }
 }
