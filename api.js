@@ -41,26 +41,58 @@
 	prot = spreadsheet_api.prototype;
 
 	spreadsheet_api.prototype.asc_addNamedSheetView = function (name, bSave) {
+		var t = this;
 		var ws = this.wb && this.wb.getWorksheet();
-		if (ws) {
-			return ws.addNamedSheetView(name, bSave);
+		var wsModel = ws ? ws.model : null;
+		if (!wsModel) {
+			return;
+		}
+
+		var _callback = function (success) {
+			if (!success) {
+				return;
+			}
+
+			wsModel.addNamedSheetView(name, bSave);
+		};
+
+		if (bSave) {
+			//TODO lock
+			this.collaborativeEditing.lock(_lock, _callback);
+		} else {
+			_callback(true);
 		}
 	};
 
 	spreadsheet_api.prototype.asc_getNamedSheetViews = function () {
 		var ws = this.wb && this.wb.getWorksheet();
-		if (ws) {
-			return ws.getNamedSheetViews();
+		var wsModel = ws ? ws.model : null;
+		if (!wsModel) {
+			return null;
 		}
+
+		return wsModel.getNamedSheetViews();
 	};
 
 	spreadsheet_api.prototype.asc_deleteNamedSheetViews = function (arr) {
+		var t = this;
 		var ws = this.wb && this.wb.getWorksheet();
-		if (ws) {
-			return ws.deleteNamedSheetViews(arr);
+		var wsModel = ws ? ws.model : null;
+		if (!wsModel) {
+			return;
 		}
-	};
 
+		var _callback = function (success) {
+			if (!success) {
+				return;
+			}
+
+			wsModel.deleteNamedSheetViews(arr);
+		};
+
+		//TODO lock
+		this.collaborativeEditing.lock(_lock, _callback);
+	};
 
 	prot["asc_addNamedSheetView"] = prot.asc_addNamedSheetView;
 	prot["asc_getNamedSheetViews"] = prot.asc_getNamedSheetViews;
