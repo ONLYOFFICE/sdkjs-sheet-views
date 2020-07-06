@@ -45,6 +45,15 @@
 		return this.name;
 	};
 
+	CT_NamedSheetView.prototype.asc_setName = function (val, addToHistory) {
+		if (addToHistory) {
+			History.Add(AscCommonExcel.g_oUndoRedoNamedSheetViews, AscCH.historyitem_NamedSheetView_SetName,
+				this.ws ? this.ws.getId() : null, null,
+				new AscCommonExcel.UndoRedoData_NamedSheetView(this.Get_Id(), this.name, val));
+		}
+		this.name = val;
+	};
+
 	CT_NamedSheetView.prototype.asc_getIsActive = function () {
 		return this._isActive;
 	};
