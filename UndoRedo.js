@@ -36,79 +36,79 @@
  * @param {undefined} undefined
  */
 function (window, undefined) {
-    var UndoRedoClassTypes = window['AscCommonExcel'].UndoRedoClassTypes;
+	var UndoRedoClassTypes = window['AscCommonExcel'].UndoRedoClassTypes;
 
-    if (!UndoRedoClassTypes) {
-        return;
-    }
+	if (!UndoRedoClassTypes) {
+		return;
+	}
 
-    function UndoRedoNamedSheetViews(wb) {
-        this.wb = wb;
-        this.nType = UndoRedoClassTypes.Add(function () {
-            return AscCommonExcel.g_oUndoRedoNamedSheetViews;
-        });
-    }
+	function UndoRedoNamedSheetViews(wb) {
+		this.wb = wb;
+		this.nType = UndoRedoClassTypes.Add(function () {
+			return AscCommonExcel.g_oUndoRedoNamedSheetViews;
+		});
+	}
 
-    UndoRedoNamedSheetViews.prototype.getClassType = function () {
-        return this.nType;
-    };
-    UndoRedoNamedSheetViews.prototype.Undo = function (Type, Data, nSheetId) {
-        this.UndoRedo(Type, Data, nSheetId, true);
-    };
-    UndoRedoNamedSheetViews.prototype.Redo = function (Type, Data, nSheetId) {
-        this.UndoRedo(Type, Data, nSheetId, false);
-    };
-    UndoRedoNamedSheetViews.prototype.UndoRedo = function (Type, Data, nSheetId, bUndo) {
-        var ws = this.wb.getWorksheetById(nSheetId);
-        if (!ws) {
-            return;
-        }
-    };
+	UndoRedoNamedSheetViews.prototype.getClassType = function () {
+		return this.nType;
+	};
+	UndoRedoNamedSheetViews.prototype.Undo = function (Type, Data, nSheetId) {
+		this.UndoRedo(Type, Data, nSheetId, true);
+	};
+	UndoRedoNamedSheetViews.prototype.Redo = function (Type, Data, nSheetId) {
+		this.UndoRedo(Type, Data, nSheetId, false);
+	};
+	UndoRedoNamedSheetViews.prototype.UndoRedo = function (Type, Data, nSheetId, bUndo) {
+		var ws = this.wb.getWorksheetById(nSheetId);
+		if (!ws) {
+			return;
+		}
+	};
 
-    function UndoRedoData_NamedSheetView(sheetView, from, to) {
-        this.sheetView = sheetView;
-        this.from = from;
-        this.to = to;
-    }
+	function UndoRedoData_NamedSheetView(sheetView, from, to) {
+		this.sheetView = sheetView;
+		this.from = from;
+		this.to = to;
+	}
 
-    UndoRedoData_NamedSheetView.prototype.Properties = {
-        sheetView: 0, from: 1, to: 2
-    };
-    UndoRedoData_NamedSheetView.prototype.getType = function () {
-        return UndoRedoDataTypes.NamedSheetView;
-    };
-    UndoRedoData_NamedSheetView.prototype.getProperties = function () {
-        return this.Properties;
-    };
-    UndoRedoData_NamedSheetView.prototype.getProperty = function (nType) {
-        switch (nType) {
-            case this.Properties.sheetView:
-                return this.sheetView;
-                break;
-            case this.Properties.from:
-                return this.from;
-                break;
-            case this.Properties.to:
-                return this.to;
-                break;
-        }
-        return null;
-    };
-    UndoRedoData_NamedSheetView.prototype.setProperty = function (nType, value) {
-        switch (nType) {
-            case this.Properties.sheetView:
-                this.sheetView = value;
-                break;
-            case this.Properties.from:
-                this.from = value;
-                break;
-            case this.Properties.to:
-                this.to = value;
-                break;
-        }
-    };
+	UndoRedoData_NamedSheetView.prototype.Properties = {
+		sheetView: 0, from: 1, to: 2
+	};
+	UndoRedoData_NamedSheetView.prototype.getType = function () {
+		return UndoRedoDataTypes.NamedSheetView;
+	};
+	UndoRedoData_NamedSheetView.prototype.getProperties = function () {
+		return this.Properties;
+	};
+	UndoRedoData_NamedSheetView.prototype.getProperty = function (nType) {
+		switch (nType) {
+			case this.Properties.sheetView:
+				return this.sheetView;
+				break;
+			case this.Properties.from:
+				return this.from;
+				break;
+			case this.Properties.to:
+				return this.to;
+				break;
+		}
+		return null;
+	};
+	UndoRedoData_NamedSheetView.prototype.setProperty = function (nType, value) {
+		switch (nType) {
+			case this.Properties.sheetView:
+				this.sheetView = value;
+				break;
+			case this.Properties.from:
+				this.from = value;
+				break;
+			case this.Properties.to:
+				this.to = value;
+				break;
+		}
+	};
 
-    window['AscCommonExcel'].UndoRedoNamedSheetViews = UndoRedoNamedSheetViews;
-    window['AscCommonExcel'].UndoRedoData_NamedSheetView = UndoRedoData_NamedSheetView;
+	window['AscCommonExcel'].UndoRedoNamedSheetViews = UndoRedoNamedSheetViews;
+	window['AscCommonExcel'].UndoRedoData_NamedSheetView = UndoRedoData_NamedSheetView;
 
 })(window);
