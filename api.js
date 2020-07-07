@@ -102,6 +102,36 @@
 		this.collaborativeEditing.lock(_lock, _callback);
 	};
 
+	spreadsheet_api.prototype._onUpdateNamedSheetViewLock = function(lockElem) {
+		var t = this;
+
+		var wsModel = t.wbModel.getWorksheetById(lockElem.Element["sheetId"]);
+		if (wsModel) {
+			var wsIndex = wsModel.getIndex();
+
+			var sheetView = g_oTableId.Get_ById(lockElem.Element["rangeOrObjectId"]);
+			if (sheetView) {
+				//sheetView.isLock = lockElem.UserId;
+				this.handlers.trigger("asc_onRefreshNamedSheetViewList", wsIndex, sheetView);
+			}
+			this.handlers.trigger("asc_onLockNamedSheetViewManager", wsIndex, true);
+		}
+	};
+
+	spreadsheet_api.prototype.asc_isNamedSheetViewLocked = function(index) {
+		var ws = this.wbModel.getWorksheet(index);
+		var sheetId = null;
+		if (null === ws || undefined === ws) {
+			sheetId = this.asc_getActiveWorksheetId();
+		} else {
+			sheetId = ws.getId();
+		}
+
+		var lockInfo = this.collaborativeEditing.getLockInfo(c_oAscLockTypeElem.Object, /*subType*/null, sheetId, "NamedSheetView");
+		return (false !== this.collaborativeEditing.getLockIntersection(lockInfo, c_oAscLockTypes.kLockTypeOther, /*bCheckOnlyLockAll*/false));
+	};
+
+
 	prot["asc_addNamedSheetView"] = prot.asc_addNamedSheetView;
 	prot["asc_getNamedSheetViews"] = prot.asc_getNamedSheetViews;
 	prot["asc_deleteNamedSheetViews"] = prot.asc_deleteNamedSheetViews;
