@@ -40,6 +40,8 @@
 	asc["spreadsheet_api"] = spreadsheet_api;
 	prot = spreadsheet_api.prototype;
 
+	var c_oAscLockTypeElem = AscCommonExcel.c_oAscLockTypeElem;
+
 	spreadsheet_api.prototype.asc_addNamedSheetView = function (name, bSave) {
 		var t = this;
 		var ws = this.wb && this.wb.getWorksheet();
@@ -105,20 +107,22 @@
 	spreadsheet_api.prototype._onUpdateNamedSheetViewLock = function(lockElem) {
 		var t = this;
 
-		var wsModel = t.wbModel.getWorksheetById(lockElem.Element["sheetId"]);
-		if (wsModel) {
-			var wsIndex = wsModel.getIndex();
+		if (c_oAscLockTypeElem.Object === lockElem.Element["type"] && AscCommonExcel.c_oAscLockTypeElemSubType.NamedSheetView === lockElem.Element["subType"]) {
+			var wsModel = t.wbModel.getWorksheetById(lockElem.Element["sheetId"]);
+			if (wsModel) {
+				var wsIndex = wsModel.getIndex();
+				var sheetView = wsModel.getNamedSheetViewByName(lockElem.Element["rangeOrObjectId"]);
+				if (sheetView) {
+					//sheetView.isLock = lockElem.UserId;
+					this.handlers.trigger("asc_onRefreshNamedSheetViewList", wsIndex, sheetView);
+				}
 
-			var sheetView = g_oTableId.Get_ById(lockElem.Element["rangeOrObjectId"]);
-			if (sheetView) {
-				//sheetView.isLock = lockElem.UserId;
-				this.handlers.trigger("asc_onRefreshNamedSheetViewList", wsIndex, sheetView);
+				this.handlers.trigger("asc_onLockNamedSheetViewManager", wsIndex, true);
 			}
-			this.handlers.trigger("asc_onLockNamedSheetViewManager", wsIndex, true);
 		}
 	};
 
-	spreadsheet_api.prototype.asc_isNamedSheetViewLocked = function(index) {
+	spreadsheet_api.prototype.asc_isNamedSheetViewLocked = function(index, name) {
 		var ws = this.wbModel.getWorksheet(index);
 		var sheetId = null;
 		if (null === ws || undefined === ws) {
@@ -127,7 +131,7 @@
 			sheetId = ws.getId();
 		}
 
-		var lockInfo = this.collaborativeEditing.getLockInfo(c_oAscLockTypeElem.Object, /*subType*/null, sheetId, "NamedSheetView");
+		var lockInfo = this.collaborativeEditing.getLockInfo(c_oAscLockTypeElem.Object, AscCommonExcel.c_oAscLockTypeElemSubType.NamedSheetView, sheetId, name);
 		return (false !== this.collaborativeEditing.getLockIntersection(lockInfo, c_oAscLockTypes.kLockTypeOther, /*bCheckOnlyLockAll*/false));
 	};
 
