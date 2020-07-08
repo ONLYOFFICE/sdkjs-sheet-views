@@ -40,6 +40,8 @@
 	var CT_ColumnFilter = window['Asc'].CT_ColumnFilter;
 	var CT_SortRule = window['Asc'].CT_SortRule;
 
+	var UndoRedoData_FromTo = AscCommonExcel.UndoRedoData_FromTo;
+
 
 	CT_NamedSheetView.prototype.asc_getName = function () {
 		return this.name;
@@ -56,6 +58,31 @@
 
 	CT_NamedSheetView.prototype.asc_getIsActive = function () {
 		return this._isActive;
+	};
+
+	CT_NamedSheetView.prototype.asc_setIsActive = function () {
+		var oldActiveIndex = this.ws.nActiveNamedSheetView;
+		for (var i = 0; i < this.ws.aNamedSheetViews.length; i++) {
+			if (this === this.ws.aNamedSheetViews[i]) {
+				this.ws.nActiveNamedSheetView = i;
+			} else {
+				this.ws.aNamedSheetViews[i]._isActive = false;
+			}
+		}
+		if (oldActiveIndex !== this.ws.nActiveNamedSheetView) {
+			this._isActive = true;
+
+			History.Create_NewPoint();
+			History.StartTransaction();
+
+			History.Add(AscCommonExcel.UndoRedoWoorksheet, AscCH.historyitem_Worksheet_SetActiveNamedSheetView,
+				this.ws ? this.ws.getId() : null, null,
+				new UndoRedoData_FromTo(oldActiveIndex, this.ws.nActiveNamedSheetView), true);
+
+			History.EndTransaction();
+
+			//TODO нужно переприменять все фильтра и в дальнейшем сортировку
+		}
 	};
 
 	CT_NamedSheetView.prototype.generateName = function (name) {
@@ -99,5 +126,6 @@
 	prot = CT_NamedSheetView.prototype;
 	prot["asc_getName"] = prot.asc_getName;
 	prot["asc_getIsActive"] = prot.asc_getIsActive;
+	prot["asc_setIsActive"] = prot.asc_setIsActive;
 
 })(window);

@@ -54,7 +54,7 @@
 		namedSheetView.ws = wsModel;
 		namedSheetView.generateName();
 
-		this._isLockedNamedSheetView(namedSheetView, function(success) {
+		this._isLockedNamedSheetView([namedSheetView], function(success) {
 			if (!success) {
 				return;
 			}
@@ -78,7 +78,7 @@
 		return wsModel.getNamedSheetViews();
 	};
 
-	spreadsheet_api.prototype.asc_deleteNamedSheetViews = function (arr) {
+	spreadsheet_api.prototype.asc_deleteNamedSheetViews = function (namedSheetViews) {
 		var t = this;
 		var ws = this.wb && this.wb.getWorksheet();
 		var wsModel = ws ? ws.model : null;
@@ -86,26 +86,32 @@
 			return;
 		}
 
-		var _callback = function (success) {
+		this._isLockedNamedSheetView(namedSheetViews, function(success) {
 			if (!success) {
 				return;
 			}
+
 			History.Create_NewPoint();
 			History.StartTransaction();
-
-			wsModel.deleteNamedSheetViews(arr);
-
+			wsModel.deleteNamedSheetViews(namedSheetViews);
 			History.EndTransaction();
-		};
 
-		//TODO lock
-		this.collaborativeEditing.lock(_lock, _callback);
+			this.handlers.trigger("asc_onRefreshNamedSheetViewList", wsModel.index);
+		});
 	};
 
-	spreadsheet_api.prototype._isLockedNamedSheetView = function (namedSheetView, callback) {
-		var lockInfo = this.collaborativeEditing.getLockInfo(c_oAscLockTypeElem.Object, AscCommonExcel.c_oAscLockTypeElemSubType.NamedSheetView,
-			this.asc_getActiveWorksheetId(), namedSheetView.asc_getName());
-		this.collaborativeEditing.lock([lockInfo], callback);
+	spreadsheet_api.prototype._isLockedNamedSheetView = function (namedSheetViews, callback) {
+		if (!namedSheetViews || !namedSheetViews.length) {
+			callback(false);
+		}
+		var loInfoArr =  [];
+		for (var i = 0; i < namedSheetViews.length; i++) {
+			var namedSheetView = namedSheetViews[i];
+			var lockInfo = this.collaborativeEditing.getLockInfo(c_oAscLockTypeElem.Object, AscCommonExcel.c_oAscLockTypeElemSubType.NamedSheetView,
+				this.asc_getActiveWorksheetId(), namedSheetView.asc_getName());
+			loInfoArr.push(lockInfo);
+		}
+		this.collaborativeEditing.lock(loInfoArr, callback);
 	}
 
 	spreadsheet_api.prototype._onUpdateNamedSheetViewLock = function(lockElem) {
@@ -138,7 +144,6 @@
 		var lockInfo = this.collaborativeEditing.getLockInfo(c_oAscLockTypeElem.Object, AscCommonExcel.c_oAscLockTypeElemSubType.NamedSheetView, sheetId, name);
 		return (false !== this.collaborativeEditing.getLockIntersection(lockInfo, c_oAscLockTypes.kLockTypeOther, /*bCheckOnlyLockAll*/false));
 	};
-
 
 	prot["asc_addNamedSheetView"] = prot.asc_addNamedSheetView;
 	prot["asc_getNamedSheetViews"] = prot.asc_getNamedSheetViews;
