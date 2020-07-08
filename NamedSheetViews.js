@@ -46,22 +46,28 @@
 	};
 
 	CT_NamedSheetView.prototype.asc_setName = function (val) {
-
+		var t = this;
+		var api = window["Asc"]["editor"];
 		if (this.name !== val) {
-			var oldVal = this.name;
-			this.name = val;
+			api._isLockedNamedSheetView([t], function(success) {
+				if (!success) {
+					return;
+				}
 
-			History.Create_NewPoint();
-			History.StartTransaction();
+				History.Create_NewPoint();
+				History.StartTransaction();
 
-			History.Add(AscCommonExcel.g_oUndoRedoNamedSheetViews, AscCH.historyitem_NamedSheetView_SetName,
-				this.ws ? this.ws.getId() : null, null,
-				new AscCommonExcel.UndoRedoData_NamedSheetView(null, oldVal, val));
+				var oldVal = t.name;
+				t.name = val;
 
-			History.EndTransaction();
+				History.Add(AscCommonExcel.g_oUndoRedoNamedSheetViews, AscCH.historyitem_NamedSheetView_SetName,
+					t.ws ? t.ws.getId() : null, null,
+					new AscCommonExcel.UndoRedoData_NamedSheetView(null, oldVal, val));
 
-			var api = window["Asc"]["editor"];
-			api.handlers.trigger("asc_onRefreshNamedSheetViewList", this.ws.index);
+				History.EndTransaction();
+
+				api.handlers.trigger("asc_onRefreshNamedSheetViewList", t.ws.index);
+			});
 		}
 	};
 
