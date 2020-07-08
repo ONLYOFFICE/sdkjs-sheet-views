@@ -63,6 +63,18 @@ function (window, undefined) {
 		if (!ws) {
 			return;
 		}
+		var api = window["Asc"]["editor"];
+		var sheetView;
+		switch (Type) {
+			case AscCH.historyitem_NamedSheetView_SetName: {
+				sheetView = ws.getNamedSheetViewByName(bUndo ? Data.to : Data.from);
+				if (sheetView) {
+					sheetView.setName(bUndo ? Data.from : Data.to);
+				}
+				break;
+			}
+		}
+
 	};
 
 	function UndoRedoData_NamedSheetView(sheetView, from, to) {

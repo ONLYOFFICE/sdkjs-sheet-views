@@ -40,49 +40,33 @@
 	var CT_ColumnFilter = window['Asc'].CT_ColumnFilter;
 	var CT_SortRule = window['Asc'].CT_SortRule;
 
-	var UndoRedoData_FromTo = AscCommonExcel.UndoRedoData_FromTo;
-
 
 	CT_NamedSheetView.prototype.asc_getName = function () {
 		return this.name;
 	};
 
-	CT_NamedSheetView.prototype.asc_setName = function (val, addToHistory) {
-		if (addToHistory) {
-			History.Add(AscCommonExcel.g_oUndoRedoNamedSheetViews, AscCH.historyitem_NamedSheetView_SetName,
-				this.ws ? this.ws.getId() : null, null,
-				new AscCommonExcel.UndoRedoData_NamedSheetView(this.Get_Id(), this.name, val));
-		}
-		this.name = val;
-	};
+	CT_NamedSheetView.prototype.asc_setName = function (val) {
 
-	CT_NamedSheetView.prototype.asc_getIsActive = function () {
-		return this._isActive;
-	};
-
-	CT_NamedSheetView.prototype.asc_setIsActive = function () {
-		var oldActiveIndex = this.ws.nActiveNamedSheetView;
-		for (var i = 0; i < this.ws.aNamedSheetViews.length; i++) {
-			if (this === this.ws.aNamedSheetViews[i]) {
-				this.ws.nActiveNamedSheetView = i;
-			} else {
-				this.ws.aNamedSheetViews[i]._isActive = false;
-			}
-		}
-		if (oldActiveIndex !== this.ws.nActiveNamedSheetView) {
-			this._isActive = true;
+		if (this.name !== val) {
+			var oldVal = this.name;
+			this.name = val;
 
 			History.Create_NewPoint();
 			History.StartTransaction();
 
-			History.Add(AscCommonExcel.UndoRedoWoorksheet, AscCH.historyitem_Worksheet_SetActiveNamedSheetView,
+			History.Add(AscCommonExcel.g_oUndoRedoNamedSheetViews, AscCH.historyitem_NamedSheetView_SetName,
 				this.ws ? this.ws.getId() : null, null,
-				new UndoRedoData_FromTo(oldActiveIndex, this.ws.nActiveNamedSheetView), true);
+				new AscCommonExcel.UndoRedoData_NamedSheetView(null, oldVal, val));
 
 			History.EndTransaction();
 
-			//TODO нужно переприменять все фильтра и в дальнейшем сортировку
+			var api = window["Asc"]["editor"];
+			api.handlers.trigger("asc_onRefreshNamedSheetViewList", this.ws.index);
 		}
+	};
+
+	CT_NamedSheetView.prototype.asc_getIsActive = function () {
+		return this._isActive;
 	};
 
 	CT_NamedSheetView.prototype.generateName = function (name) {
