@@ -69,13 +69,13 @@
 		return this._isActive;
 	};
 
-	CT_NamedSheetView.prototype.generateName = function (name) {
+	CT_NamedSheetView.prototype.generateName = function () {
 		var ws = this.ws;
 		if (!ws) {
 			return;
 		}
 
-		var mapNames = [], isContains;
+		var mapNames = [], isContains, name = this.name;
 		for (var i = 0; i < ws.aNamedSheetViews.length; i++) {
 			if (name && name === ws.aNamedSheetViews[i].name) {
 				isContains = true;

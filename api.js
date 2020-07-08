@@ -43,7 +43,7 @@
 	var c_oAscLockTypeElem = AscCommonExcel.c_oAscLockTypeElem;
 	var UndoRedoData_FromTo = AscCommonExcel.UndoRedoData_FromTo;
 
-	spreadsheet_api.prototype.asc_addNamedSheetView = function () {
+	spreadsheet_api.prototype.asc_addNamedSheetView = function (duplicateNamedSheetView) {
 		var t = this;
 		var ws = this.wb && this.wb.getWorksheet();
 		var wsModel = ws ? ws.model : null;
@@ -51,7 +51,13 @@
 			return;
 		}
 
-		var namedSheetView = new Asc.CT_NamedSheetView();
+		var namedSheetView;
+		if (duplicateNamedSheetView) {
+			namedSheetView = duplicateNamedSheetView.clone();
+
+		} else {
+			namedSheetView = new Asc.CT_NamedSheetView();
+		}
 		namedSheetView.ws = wsModel;
 		namedSheetView.generateName();
 
