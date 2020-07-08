@@ -58,13 +58,46 @@
 		return this._isActive;
 	};
 
-	CT_NamedSheetView.prototype.asc_getIsTemporary = function () {
-		return this._isTemporary;
+	CT_NamedSheetView.prototype.generateName = function (name) {
+		var ws = this.ws;
+		if (!ws) {
+			return;
+		}
+
+		var mapNames = [], isContains;
+		for (var i = 0; i < ws.aNamedSheetViews.length; i++) {
+			if (name && name === ws.aNamedSheetViews[i].name) {
+				isContains = true;
+			}
+			mapNames[ws.aNamedSheetViews[i].name] = 1;
+		}
+
+		var baseName, counter;
+		if (!name) {
+			//TODO перевод
+			name = "View";
+
+			baseName = name;
+			counter = 1;
+			while (mapNames[baseName + counter]) {
+				counter++;
+			}
+			name = baseName + counter;
+		} else if (!isContains) {
+			//так делаяем при создании дубликата
+			baseName = name + " ";
+			counter = 2;
+			while (mapNames[baseName + "(" + counter + ")"]) {
+				counter++;
+			}
+			name = baseName + "(" + counter + ")";
+		}
+
+		return name;
 	};
 
 	prot = CT_NamedSheetView.prototype;
 	prot["asc_getName"] = prot.asc_getName;
 	prot["asc_getIsActive"] = prot.asc_getIsActive;
-	prot["asc_getIsTemporary"] = prot.asc_getIsTemporary;
 
 })(window);

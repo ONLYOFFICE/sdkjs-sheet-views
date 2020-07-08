@@ -42,7 +42,7 @@
 
 	var c_oAscLockTypeElem = AscCommonExcel.c_oAscLockTypeElem;
 
-	spreadsheet_api.prototype.asc_addNamedSheetView = function (name, bSave) {
+	spreadsheet_api.prototype.asc_addNamedSheetView = function () {
 		var t = this;
 		var ws = this.wb && this.wb.getWorksheet();
 		var wsModel = ws ? ws.model : null;
@@ -50,24 +50,22 @@
 			return;
 		}
 
-		var _callback = function (success) {
+		var namedSheetView = new Asc.CT_NamedSheetView();
+		namedSheetView.ws = wsModel;
+		namedSheetView.generateName();
+
+		this._isLockedNamedSheetView(namedSheetView, function(success) {
 			if (!success) {
 				return;
 			}
+
 			History.Create_NewPoint();
 			History.StartTransaction();
-
-			wsModel.addNamedSheetView(name, bSave);
-
+			wsModel.addNamedSheetView(namedSheetView);
 			History.EndTransaction();
-		};
 
-		if (bSave) {
-			//TODO lock
-			this.collaborativeEditing.lock(_lock, _callback);
-		} else {
-			_callback(true);
-		}
+			this.handlers.trigger("asc_onRefreshNamedSheetViewList", wsModel.index);
+		});
 	};
 
 	spreadsheet_api.prototype.asc_getNamedSheetViews = function () {
@@ -104,6 +102,12 @@
 		this.collaborativeEditing.lock(_lock, _callback);
 	};
 
+	spreadsheet_api.prototype._isLockedNamedSheetView = function (namedSheetView, callback) {
+		var lockInfo = this.collaborativeEditing.getLockInfo(c_oAscLockTypeElem.Object, AscCommonExcel.c_oAscLockTypeElemSubType.NamedSheetView,
+			this.asc_getActiveWorksheetId(), namedSheetView.asc_getName());
+		this.collaborativeEditing.lock([lockInfo], callback);
+	}
+
 	spreadsheet_api.prototype._onUpdateNamedSheetViewLock = function(lockElem) {
 		var t = this;
 
@@ -113,8 +117,8 @@
 				var wsIndex = wsModel.getIndex();
 				var sheetView = wsModel.getNamedSheetViewByName(lockElem.Element["rangeOrObjectId"]);
 				if (sheetView) {
-					//sheetView.isLock = lockElem.UserId;
-					this.handlers.trigger("asc_onRefreshNamedSheetViewList", wsIndex, sheetView);
+					sheetView.isLock = lockElem.UserId;
+					this.handlers.trigger("asc_onRefreshNamedSheetViewList", wsIndex);
 				}
 
 				this.handlers.trigger("asc_onLockNamedSheetViewManager", wsIndex, true);
