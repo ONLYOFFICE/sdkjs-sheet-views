@@ -33,7 +33,7 @@
 
 (function (window, document) {
 	window['Asc']['Addons'] = window['Asc']['Addons'] || {};
-	window['Asc']['Addons']['sheet_views'] = true; // register addon
+	window['Asc']['Addons']['sheet-views'] = true; // register addon
 
 	var asc = window["Asc"];
 	var prot;
