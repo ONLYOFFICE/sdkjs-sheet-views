@@ -172,14 +172,13 @@
 			History.StartTransaction();
 
 			History.Add(AscCommonExcel.UndoRedoWoorksheet, AscCH.historyitem_Worksheet_SetActiveNamedSheetView,
-				this.ws ? this.ws.getId() : null, null,
+				ws ? ws.getId() : null, null,
 				new UndoRedoData_FromTo(oldActiveIndex, ws.nActiveNamedSheetView), true);
 
 			History.EndTransaction();
 
-			//TODO нужно переприменять все фильтра и в дальнейшем сортировку
-
-
+			//TODO нужно переприменять в дальнейшем сортировку
+			ws.autoFilters.reapplyAllFilters(true);
 		}
 	};
 
