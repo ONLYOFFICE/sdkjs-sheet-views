@@ -37,7 +37,7 @@
 
 	var asc = window["Asc"];
 	var prot;
-	asc["spreadsheet_api"] = spreadsheet_api;
+	var spreadsheet_api = asc["spreadsheet_api"];
 	prot = spreadsheet_api.prototype;
 
 	var c_oAscLockTypeElem = AscCommonExcel.c_oAscLockTypeElem;
