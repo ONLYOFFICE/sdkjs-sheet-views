@@ -60,9 +60,9 @@
 				var oldVal = t.name;
 				t.name = val;
 
-				History.Add(AscCommonExcel.g_oUndoRedoNamedSheetViews, AscCH.historyitem_NamedSheetView_SetName,
+				/*History.Add(AscCommonExcel.g_oUndoRedoNamedSheetViews, AscCH.historyitem_NamedSheetView_SetName,
 					t.ws ? t.ws.getId() : null, null,
-					new AscCommonExcel.UndoRedoData_NamedSheetView(null, oldVal, val));
+					new AscCommonExcel.UndoRedoData_NamedSheetView(null, oldVal, val));*/
 
 				History.EndTransaction();
 
@@ -100,7 +100,7 @@
 				counter++;
 			}
 			name = baseName + counter;
-		} else if (!isContains) {
+		} else if (isContains) {
 			//так делаяем при создании дубликата
 			baseName = name + " ";
 			counter = 2;
