@@ -59,7 +59,7 @@
 			namedSheetView = new Asc.CT_NamedSheetView();
 		}
 		namedSheetView.ws = wsModel;
-		namedSheetView.generateName();
+		namedSheetView.name = namedSheetView.generateName();
 
 		this._isLockedNamedSheetView([namedSheetView], function(success) {
 			if (!success) {
