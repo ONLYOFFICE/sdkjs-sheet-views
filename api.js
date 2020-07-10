@@ -41,7 +41,6 @@
 	prot = spreadsheet_api.prototype;
 
 	var c_oAscLockTypeElem = AscCommonExcel.c_oAscLockTypeElem;
-	var UndoRedoData_FromTo = AscCommonExcel.UndoRedoData_FromTo;
 
 	spreadsheet_api.prototype.asc_addNamedSheetView = function (duplicateNamedSheetView, setActive) {
 		var t = this;
@@ -157,7 +156,7 @@
 		return (false !== this.collaborativeEditing.getLockIntersection(lockInfo, c_oAscLockTypes.kLockTypeOther, /*bCheckOnlyLockAll*/false));
 	};
 
-	spreadsheet_api.prototype.asc_setActiveNamedSheetView = function(namedSheetView, index) {
+	spreadsheet_api.prototype.asc_setActiveNamedSheetView = function(name, index) {
 		if (index === undefined) {
 			index = this.wbModel.getActive();
 		}
@@ -165,9 +164,9 @@
 
 		var oldActiveIndex = ws.nActiveNamedSheetView;
 		for (var i = 0; i < ws.aNamedSheetViews.length; i++) {
-			if (namedSheetView && namedSheetView === ws.aNamedSheetViews[i]) {
+			if (name === ws.aNamedSheetViews[i].name) {
 				ws.nActiveNamedSheetView = i;
-				namedSheetView._isActive = true;
+				ws.aNamedSheetViews[i]._isActive = true;
 			} else {
 				ws.aNamedSheetViews[i]._isActive = false;
 			}
@@ -178,7 +177,7 @@
 
 			History.Add(AscCommonExcel.UndoRedoWoorksheet, AscCH.historyitem_Worksheet_SetActiveNamedSheetView,
 				ws ? ws.getId() : null, null,
-				new UndoRedoData_FromTo(oldActiveIndex, ws.nActiveNamedSheetView), true);
+				new AscCommonExcel.UndoRedoData_FromTo(oldActiveIndex, ws.nActiveNamedSheetView), true);
 
 			History.EndTransaction();
 
