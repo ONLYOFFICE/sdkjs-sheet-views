@@ -70,7 +70,7 @@
 			wsModel.addNamedSheetView(namedSheetView, !!duplicateNamedSheetView);
 
 			if (setActive) {
-				t.asc_setActiveNamedSheetView(namedSheetView);
+				t.asc_setActiveNamedSheetView(namedSheetView.name);
 			}
 
 			History.EndTransaction();
