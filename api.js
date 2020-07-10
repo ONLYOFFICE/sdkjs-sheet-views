@@ -107,7 +107,7 @@
 			wsModel.deleteNamedSheetViews(namedSheetViews);
 			History.EndTransaction();
 
-			this.handlers.trigger("asc_onRefreshNamedSheetViewList", wsModel.index);
+			t.handlers.trigger("asc_onRefreshNamedSheetViewList", wsModel.index);
 		});
 	};
 
