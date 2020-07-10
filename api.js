@@ -68,7 +68,7 @@
 
 			History.Create_NewPoint();
 			History.StartTransaction();
-			wsModel.addNamedSheetView(namedSheetView);
+			wsModel.addNamedSheetView(namedSheetView, !!duplicateNamedSheetView);
 			History.EndTransaction();
 
 			this.handlers.trigger("asc_onRefreshNamedSheetViewList", wsModel.index);
