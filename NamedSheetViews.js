@@ -40,6 +40,9 @@
 	var CT_ColumnFilter = window['Asc'].CT_ColumnFilter;
 	var CT_SortRule = window['Asc'].CT_SortRule;
 
+	if (!CT_NamedSheetView || !CT_NsvFilter || !CT_ColumnFilter || !CT_SortRule) {
+		return;
+	}
 
 	CT_NamedSheetView.prototype.asc_getName = function () {
 		return this.name;
