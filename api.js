@@ -163,6 +163,7 @@
 		var ws = this.wbModel.getWorksheet(index);
 
 		var oldActiveIndex = ws.nActiveNamedSheetView;
+		ws.nActiveNamedSheetView = null;
 		for (var i = 0; i < ws.aNamedSheetViews.length; i++) {
 			if (name === ws.aNamedSheetViews[i].name) {
 				ws.nActiveNamedSheetView = i;
@@ -183,6 +184,8 @@
 
 			//TODO нужно переприменять в дальнейшем сортировку
 			ws.autoFilters.reapplyAllFilters(true);
+
+			this.handlers.trigger("asc_onRefreshNamedSheetViewList", index);
 		}
 	};
 
