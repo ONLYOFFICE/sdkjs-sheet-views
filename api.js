@@ -43,7 +43,7 @@
 	var c_oAscLockTypeElem = AscCommonExcel.c_oAscLockTypeElem;
 	var UndoRedoData_FromTo = AscCommonExcel.UndoRedoData_FromTo;
 
-	spreadsheet_api.prototype.asc_addNamedSheetView = function (duplicateNamedSheetView) {
+	spreadsheet_api.prototype.asc_addNamedSheetView = function (duplicateNamedSheetView, setActive) {
 		var t = this;
 		var ws = this.wb && this.wb.getWorksheet();
 		var wsModel = ws ? ws.model : null;
@@ -69,6 +69,11 @@
 			History.Create_NewPoint();
 			History.StartTransaction();
 			wsModel.addNamedSheetView(namedSheetView, !!duplicateNamedSheetView);
+
+			if (setActive) {
+				t.asc_setActiveNamedSheetView(namedSheetView);
+			}
+
 			History.EndTransaction();
 
 			t.handlers.trigger("asc_onRefreshNamedSheetViewList", wsModel.index);
