@@ -115,14 +115,14 @@
 		if (!namedSheetViews || !namedSheetViews.length) {
 			callback(false);
 		}
-		var loInfoArr =  [];
+		var lockInfoArr =  [];
 		for (var i = 0; i < namedSheetViews.length; i++) {
 			var namedSheetView = namedSheetViews[i];
 			var lockInfo = this.collaborativeEditing.getLockInfo(c_oAscLockTypeElem.Object, AscCommonExcel.c_oAscLockTypeElemSubType.NamedSheetView,
 				this.asc_getActiveWorksheetId(), namedSheetView.asc_getName());
-			loInfoArr.push(lockInfo);
+			lockInfoArr.push(lockInfo);
 		}
-		this.collaborativeEditing.lock(loInfoArr, callback);
+		this.collaborativeEditing.lock(lockInfoArr, callback);
 	}
 
 	spreadsheet_api.prototype._onUpdateNamedSheetViewLock = function(lockElem) {

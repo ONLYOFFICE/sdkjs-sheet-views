@@ -116,9 +116,15 @@
 		return name;
 	};
 
+	CT_NamedSheetView.prototype.asc_getIsLock = function () {
+		return this.isLock;
+	};
+
+
 	prot = CT_NamedSheetView.prototype;
 	prot["asc_getName"] = prot.asc_getName;
 	prot["asc_getIsActive"] = prot.asc_getIsActive;
 	prot["asc_setIsActive"] = prot.asc_setIsActive;
+	prot["asc_getIsLock"] = prot.asc_getIsLock;
 
 })(window);
