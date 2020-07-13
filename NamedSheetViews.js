@@ -120,6 +120,38 @@
 		return this.isLock;
 	};
 
+	CT_NamedSheetView.prototype.addFilter = function (filter) {
+		var nsvFilter = new CT_NsvFilter();
+		nsvFilter.init(filter);
+		this.nsvFilters.push(nsvFilter);
+		//TODO history
+
+	};
+
+	CT_NamedSheetView.prototype.deleteFilter = function (filter) {
+		if (!this.nsvFilters || !this.nsvFilters.length || !filter) {
+			return;
+		}
+
+		for (var i = 0; i < this.nsvFilters.length; i++) {
+			var isAutoFilter = filter.isAutoFilter();
+			var isDelete = false;
+			if (isAutoFilter && this.nsvFilters[i].tableId === "0") {
+				isDelete = true;
+			} else if (!isAutoFilter && this.nsvFilters[i].tableId === filter.DisplayName) {
+				isDelete = true;
+			}
+
+			if (isDelete) {
+				this.nsvFilters.splice(i, 1);
+				//TODO history
+				break;
+			}
+		}
+	};
+
+
+
 
 	prot = CT_NamedSheetView.prototype;
 	prot["asc_getName"] = prot.asc_getName;
