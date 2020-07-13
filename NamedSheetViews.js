@@ -150,8 +150,17 @@
 		}
 	};
 
-
-
+	CT_NamedSheetView.prototype.getNsvFiltersByTableId = function (val) {
+		if (!this.nsvFilters) {
+			return null;
+		}
+		for (var i = 0; i < this.nsvFilters.length; i++) {
+			if (this.nsvFilters[i].tableId === val) {
+				return this.nsvFilters[i];
+			}
+		}
+		return null;
+	};
 
 	prot = CT_NamedSheetView.prototype;
 	prot["asc_getName"] = prot.asc_getName;
