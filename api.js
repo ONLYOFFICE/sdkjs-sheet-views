@@ -184,10 +184,69 @@
 
 			//TODO нужно переприменять в дальнейшем сортировку
 			ws.autoFilters.reapplyAllFilters(true);
+			this.updateAllFilters();
 
 			this.handlers.trigger("asc_onRefreshNamedSheetViewList", index);
 		}
 	};
+
+	spreadsheet_api.prototype.updateAllFilters = function() {
+		var t = this;
+		var wsModel = this.wbModel.getWorksheet(this.wbModel.getActive());
+		var ws = t.wb.getWorksheet(wsModel.getIndex());
+
+		var arrChangedRanges = [];
+		for (var i = 0; i < wsModel.TableParts.length; ++i) {
+			var table = wsModel.TableParts[i];
+			arrChangedRanges.push(table.Ref);
+		}
+
+		if (wsModel.AutoFilter) {
+			arrChangedRanges.push(wsModel.AutoFilter.Ref);
+		}
+
+		ws._updateGroups();
+		//wsModel.autoFilters.reDrawFilter(arn);
+		var oRecalcType = AscCommonExcel.recalcType.full;
+		//reinitRanges = true;
+		//updateDrawingObjectsInfo = {target: c_oTargetType.RowResize, row: arn.r1};
+
+		ws._initCellsArea(oRecalcType);
+		if (oRecalcType) {
+			ws.cache.reset();
+		}
+		ws._cleanCellsTextMetricsCache();
+		ws.objectRender.bUpdateMetrics = false;
+		ws._prepareCellTextMetricsCache();
+		ws.objectRender.bUpdateMetrics = true;
+
+		//arrChangedRanges = arrChangedRanges.concat(t.model.hiddenManager.getRecalcHidden());
+
+		ws.cellCommentator.updateAreaComments();
+
+		/*if (t.objectRender) {
+			if (reinitRanges) {
+				t._updateDrawingArea();
+			}
+			if (null !== updateDrawingObjectsInfo) {
+				t.objectRender.updateSizeDrawingObjects(updateDrawingObjectsInfo);
+			}
+			if (null !== updateDrawingObjectsInfo2) {
+				t.objectRender.updateDrawingObject(updateDrawingObjectsInfo2.bInsert,
+					updateDrawingObjectsInfo2.operType, updateDrawingObjectsInfo2.updateRange);
+			}
+			t.model.onUpdateRanges(arrChangedRanges);
+			t.objectRender.rebuildChartGraphicObjects(arrChangedRanges);
+		}
+		t.scrollType |= AscCommonExcel.c_oAscScrollType.ScrollVertical | AscCommonExcel.c_oAscScrollType.ScrollHorizontal;*/
+		ws.draw();
+
+		ws._updateVisibleRowsCount();
+
+		ws.handlers.trigger("selectionChanged");
+		ws.handlers.trigger("selectionMathInfoChanged", ws.getSelectionMathInfo());
+	};
+
 
 	prot["asc_addNamedSheetView"] = prot.asc_addNamedSheetView;
 	prot["asc_getNamedSheetViews"] = prot.asc_getNamedSheetViews;
