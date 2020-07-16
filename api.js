@@ -89,6 +89,23 @@
 		return wsModel.getNamedSheetViews();
 	};
 
+	spreadsheet_api.prototype.asc_getActiveNamedSheetView = function (index) {
+		var ws = this.wbModel.getWorksheet(index);
+		if (!ws) {
+			return null;
+		}
+
+		var activeNamedSheetViewIndex = ws.getActiveNamedSheetView();
+		if (activeNamedSheetViewIndex !== null) {
+			var activeNamedSheetView = ws.aNamedSheetViews ? ws.aNamedSheetViews[activeNamedSheetViewIndex] : null;
+			if (activeNamedSheetView) {
+				return activeNamedSheetView.name;
+			}
+		}
+
+		return null;
+	};
+
 	spreadsheet_api.prototype.asc_deleteNamedSheetViews = function (namedSheetViews) {
 		var t = this;
 		var ws = this.wb && this.wb.getWorksheet();
@@ -260,5 +277,6 @@
 	prot["asc_getNamedSheetViews"] = prot.asc_getNamedSheetViews;
 	prot["asc_deleteNamedSheetViews"] = prot.asc_deleteNamedSheetViews;
 	prot["asc_setActiveNamedSheetView"] = prot.asc_setActiveNamedSheetView;
+	prot["asc_getActiveNamedSheetView"] = prot.asc_getActiveNamedSheetView;
 
 })(window, window.document);
