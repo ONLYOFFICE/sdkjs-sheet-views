@@ -75,7 +75,9 @@
 
 			History.EndTransaction();
 
-			t.handlers.trigger("asc_onRefreshNamedSheetViewList", wsModel.index);
+			if (!setActive) {
+				t.handlers.trigger("asc_onRefreshNamedSheetViewList", wsModel.index);
+			}
 		});
 	};
 
