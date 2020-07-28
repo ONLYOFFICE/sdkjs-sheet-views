@@ -162,6 +162,168 @@
 		return null;
 	};
 
+	CT_NamedSheetView.prototype.Write_ToBinary2 = function (writer) {
+		writer.WriteLong(this.nsvFilters ? this.nsvFilters.length : 0);
+
+		if (this.nsvFilters) {
+			for(var i = 0, length = this.nsvFilters.length; i < length; ++i) {
+				this.nsvFilters[i].Write_ToBinary2(writer);
+			}
+		}
+
+		writer.WriteString2(this.name);
+		writer.WriteLong(this.id);
+	};
+
+	CT_NamedSheetView.prototype.Read_FromBinary = function (reader) {
+		var length = reader.GetLong();
+		for (var i = 0; i < length; ++i) {
+			var _filter = new CT_NsvFilter();
+			this.nsvFilters.push(_filter.Read_FromBinary2(reader));
+		}
+
+		this.name = reader.GetString2();
+		this.id = reader.GetLong();
+	};
+
+	CT_NsvFilter.prototype.Write_ToBinary2 = function (writer) {
+		writer.WriteLong(this.columnsFilter ? this.columnsFilter.length : 0);
+
+		var i, length;
+		if (this.columnsFilter) {
+			for(i = 0, length = this.columnsFilter.length; i < length; ++i) {
+				this.columnsFilter[i].Write_ToBinary2(writer);
+			}
+		}
+
+		writer.WriteLong(this.sortRules ? this.sortRules.length : 0);
+
+		if (this.sortRules) {
+			for(i = 0, length = this.sortRules.length; i < length; ++i) {
+				this.sortRules[i].Write_ToBinary2(writer);
+			}
+		}
+
+		writer.WriteLong(this.filterId);
+	};
+
+	CT_NsvFilter.prototype.Read_FromBinary2 = function (reader) {
+		var i, obj;
+		var length = reader.GetLong();
+		for (i = 0; i < length; ++i) {
+			_obj = new CT_ColumnFilter();
+			this.columnsFilter.push(_obj.Read_FromBinary2(reader));
+		}
+
+		length = reader.GetLong();
+		for (i = 0; i < length; ++i) {
+			var _obj = new CT_SortRule();
+			this.sortRules.push(_obj.Read_FromBinary2(reader));
+		}
+
+		this.filterId = reader.GetLong();
+	};
+
+	CT_ColumnFilter.prototype.Write_ToBinary2 = function (writer) {
+		if(null != this.dxf) {
+			var dxf = this.dxf;
+			writer.WriteBool(true);
+			var oBinaryStylesTableWriter = new AscCommonExcel.BinaryStylesTableWriter(writer);
+			oBinaryStylesTableWriter.bs.WriteItem(0, function(){oBinaryStylesTableWriter.WriteDxf(dxf);});
+		}else {
+			writer.WriteBool(false);
+		}
+
+		if(null != this.filter) {
+			writer.WriteBool(true);
+			this.filter.Write_ToBinary2(writer);
+		} else {
+			writer.WriteBool(false);
+		}
+		//?
+		/*	this.colId = null;
+		this.id = null;*/
+
+		return res;
+	};
+
+	CT_ColumnFilter.prototype.Read_FromBinary2 = function (reader) {
+		if (reader.GetBool()) {
+			var api_sheet = Asc['editor'];
+			var wb = api_sheet.wbModel;
+			var bsr = new AscCommonExcel.Binary_StylesTableReader(reader, wb);
+			var bcr = new AscCommon.Binary_CommonReader(r);
+			var oDxf = new AscCommonExcel.CellXfs();
+			reader.GetUChar();
+			var length = reader.GetULongLE();
+			bcr.Read1(length, function(t,l){
+				return bsr.ReadDxf(t,l,oDxf);
+			});
+			this.dxf = oDxf;
+		}
+		if (reader.GetBool()) {
+			var obj = new FilterColumn();
+			obj.Read_FromBinary2(reader);
+			this.filter = obj;
+		}
+	};
+
+	CT_SortRule.prototype.Write_ToBinary2 = function (writer) {
+		if(null != this.dxf) {
+			var dxf = this.dxf;
+			writer.WriteBool(true);
+			var oBinaryStylesTableWriter = new AscCommonExcel.BinaryStylesTableWriter(writer);
+			oBinaryStylesTableWriter.bs.WriteItem(0, function(){oBinaryStylesTableWriter.WriteDxf(dxf);});
+		}else {
+			writer.WriteBool(false);
+		}
+
+		if(null != this.sortCondition) {
+			writer.WriteBool(true);
+			this.sortCondition.Write_ToBinary2(writer);
+		} else {
+			writer.WriteBool(false);
+		}
+
+		if(null != this.richSortCondition) {
+			writer.WriteBool(true);
+			this.richSortCondition.Write_ToBinary2(writer);
+		} else {
+			writer.WriteBool(false);
+		}
+	};
+
+	CT_SortRule.prototype.Read_FromBinary2 = function (reader) {
+		if (reader.GetBool()) {
+			var api_sheet = Asc['editor'];
+			var wb = api_sheet.wbModel;
+			var bsr = new AscCommonExcel.Binary_StylesTableReader(reader, wb);
+			var bcr = new AscCommon.Binary_CommonReader(r);
+			var oDxf = new AscCommonExcel.CellXfs();
+			reader.GetUChar();
+			var length = reader.GetULongLE();
+			bcr.Read1(length, function(t,l){
+				return bsr.ReadDxf(t,l,oDxf);
+			});
+			this.dxf = oDxf;
+		}
+
+		var obj;
+		if (reader.GetBool()) {
+			obj = new new AscCommonExcel.FilterColumn();
+			obj.Read_FromBinary2(reader);
+			this.sortCondition = obj;
+		}
+
+		if (reader.GetBool()) {
+			obj = new AscCommonExcel.SortCondition()();
+			obj.Read_FromBinary2(reader);
+			//TODO CT_RichSortCondition ?
+			this.richSortCondition = obj;
+		}
+	};
+
+
 	prot = CT_NamedSheetView.prototype;
 	prot["asc_getName"] = prot.asc_getName;
 	prot["asc_getIsActive"] = prot.asc_getIsActive;
