@@ -175,17 +175,6 @@
 		writer.WriteLong(this.id);
 	};
 
-	CT_NamedSheetView.prototype.Read_FromBinary = function (reader) {
-		var length = reader.GetLong();
-		for (var i = 0; i < length; ++i) {
-			var _filter = new CT_NsvFilter();
-			this.nsvFilters.push(_filter.Read_FromBinary2(reader));
-		}
-
-		this.name = reader.GetString2();
-		this.id = reader.GetLong();
-	};
-
 	CT_NsvFilter.prototype.Write_ToBinary2 = function (writer) {
 		writer.WriteLong(this.columnsFilter ? this.columnsFilter.length : 0);
 
@@ -206,24 +195,6 @@
 
 		writer.WriteLong(this.filterId);
 	};
-
-	CT_NsvFilter.prototype.Read_FromBinary2 = function (reader) {
-		var i, obj;
-		var length = reader.GetLong();
-		for (i = 0; i < length; ++i) {
-			_obj = new CT_ColumnFilter();
-			this.columnsFilter.push(_obj.Read_FromBinary2(reader));
-		}
-
-		length = reader.GetLong();
-		for (i = 0; i < length; ++i) {
-			var _obj = new CT_SortRule();
-			this.sortRules.push(_obj.Read_FromBinary2(reader));
-		}
-
-		this.filterId = reader.GetLong();
-	};
-
 	CT_ColumnFilter.prototype.Write_ToBinary2 = function (writer) {
 		if(null != this.dxf) {
 			var dxf = this.dxf;
@@ -243,31 +214,7 @@
 		//?
 		/*	this.colId = null;
 		this.id = null;*/
-
-		return res;
 	};
-
-	CT_ColumnFilter.prototype.Read_FromBinary2 = function (reader) {
-		if (reader.GetBool()) {
-			var api_sheet = Asc['editor'];
-			var wb = api_sheet.wbModel;
-			var bsr = new AscCommonExcel.Binary_StylesTableReader(reader, wb);
-			var bcr = new AscCommon.Binary_CommonReader(r);
-			var oDxf = new AscCommonExcel.CellXfs();
-			reader.GetUChar();
-			var length = reader.GetULongLE();
-			bcr.Read1(length, function(t,l){
-				return bsr.ReadDxf(t,l,oDxf);
-			});
-			this.dxf = oDxf;
-		}
-		if (reader.GetBool()) {
-			var obj = new FilterColumn();
-			obj.Read_FromBinary2(reader);
-			this.filter = obj;
-		}
-	};
-
 	CT_SortRule.prototype.Write_ToBinary2 = function (writer) {
 		if(null != this.dxf) {
 			var dxf = this.dxf;
@@ -290,36 +237,6 @@
 			this.richSortCondition.Write_ToBinary2(writer);
 		} else {
 			writer.WriteBool(false);
-		}
-	};
-
-	CT_SortRule.prototype.Read_FromBinary2 = function (reader) {
-		if (reader.GetBool()) {
-			var api_sheet = Asc['editor'];
-			var wb = api_sheet.wbModel;
-			var bsr = new AscCommonExcel.Binary_StylesTableReader(reader, wb);
-			var bcr = new AscCommon.Binary_CommonReader(r);
-			var oDxf = new AscCommonExcel.CellXfs();
-			reader.GetUChar();
-			var length = reader.GetULongLE();
-			bcr.Read1(length, function(t,l){
-				return bsr.ReadDxf(t,l,oDxf);
-			});
-			this.dxf = oDxf;
-		}
-
-		var obj;
-		if (reader.GetBool()) {
-			obj = new new AscCommonExcel.FilterColumn();
-			obj.Read_FromBinary2(reader);
-			this.sortCondition = obj;
-		}
-
-		if (reader.GetBool()) {
-			obj = new AscCommonExcel.SortCondition()();
-			obj.Read_FromBinary2(reader);
-			//TODO CT_RichSortCondition ?
-			this.richSortCondition = obj;
 		}
 	};
 
