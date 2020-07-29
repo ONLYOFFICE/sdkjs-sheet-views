@@ -154,6 +154,9 @@
 		if (!this.nsvFilters) {
 			return null;
 		}
+		if (!val) {
+			val = "0";
+		}
 		for (var i = 0; i < this.nsvFilters.length; i++) {
 			if (this.nsvFilters[i].tableId === val) {
 				return this.nsvFilters[i];
