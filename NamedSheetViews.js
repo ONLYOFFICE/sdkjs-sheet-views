@@ -197,6 +197,30 @@
 		}
 
 		writer.WriteLong(this.filterId);
+
+		if (null != this.Ref) {
+			writer.WriteBool(true);
+			writer.WriteLong(this.Ref.r1);
+			writer.WriteLong(this.Ref.c1);
+			writer.WriteLong(this.Ref.r2);
+			writer.WriteLong(this.Ref.c2);
+		} else {
+			writer.WriteBool(false);
+		}
+
+		if (null != this.tableId) {
+			writer.WriteBool(true);
+			writer.WriteString2(this.tableId);
+		} else {
+			writer.WriteBool(false);
+		}
+
+		if (null != this.tableIdOpen) {
+			writer.WriteBool(true);
+			writer.WriteString2(this.tableIdOpen);
+		} else {
+			writer.WriteBool(false);
+		}
 	};
 	CT_ColumnFilter.prototype.Write_ToBinary2 = function (writer) {
 		if(null != this.dxf) {
