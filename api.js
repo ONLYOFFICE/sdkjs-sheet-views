@@ -210,6 +210,13 @@
 			//можно выделить отдельный массив, либо добавить ещё одно поле в строке
 			//TODO сейчас пока при переходе между вью открываю все строки в а/ф!!!
 
+			//для того, чтобы скрытые дефолтом строчки внутри фильтров не потярялись, временно отправляем их в массив
+			if (oldActiveIndex === null) {
+				ws.pushHiddenRowsIntoFilters();
+			} else if (ws.nActiveNamedSheetView) {
+				ws.pullHiddenRowsIntoFilters();
+			}
+
 			ws.autoFilters.reapplyAllFilters(true, true);
 			this.updateAllFilters();
 
