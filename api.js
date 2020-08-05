@@ -211,13 +211,36 @@
 			//TODO сейчас пока при переходе между вью открываю все строки в а/ф!!!
 
 			//для того, чтобы скрытые дефолтом строчки внутри фильтров не потярялись, временно отправляем их в массив
-			if (oldActiveIndex === null) {
+			/*if (oldActiveIndex === null) {
 				ws.pushHiddenRowsIntoFilters();
 			} else if (ws.nActiveNamedSheetView) {
 				ws.pullHiddenRowsIntoFilters();
+			}*/
+
+			//при переходе во вью - переносим с дефолта все флаги о скрытии строчек
+			//переприменяем все фильтры
+			//применяем скрытие строчек внутрии а/ф - используя новый флаг о скрытии
+			//все остальные строчки - используя старый флаг о скрытии строк
+			//получение данных о скрытой строке: в режиме вью внутри а/ф используем новый флаг
+			//вне а/ф - старый флаг
+			//при переходе из дефолта внутри а/ф(к которому не применен фильтр) наследуем флаг об скрытии/открытии ячеек
+			//для этого прохожусь по всем строкам - и наследую флаг
+			if (oldActiveIndex === null) {
+				//выставляем здесь новый флаг о скрытии. данные берём из дефолота. для этого временно подменяем nActiveNamedSheetView
+				var _newIndex = ws.nActiveNamedSheetView;
+				ws.nActiveNamedSheetView = null;
+
+
+				ws.getRange3(0, 0, AscCommon.gc_nMaxRow0, 0)._foreachRowNoEmpty(function(row) {
+					row.setHidden(row.getHidden(), true);
+				});
+
+				ws.nActiveNamedSheetView = _newIndex;
 			}
 
-			ws.autoFilters.reapplyAllFilters(true, true);
+
+			ws.autoFilters.reapplyAllFilters(true, ws.nActiveNamedSheetView !== null);
+
 			this.updateAllFilters();
 
 			this.handlers.trigger("asc_onRefreshNamedSheetViewList", index);
