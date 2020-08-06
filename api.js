@@ -221,7 +221,7 @@
 			//вне а/ф - старый флаг
 			//при переходе из дефолта внутри а/ф(к которому не применен фильтр) наследуем флаг об скрытии/открытии ячеек
 			//для этого прохожусь по всем строкам - и наследую флаг
-			if (oldActiveIndex === null) {
+			/*if (oldActiveIndex === null) {
 				//выставляем здесь новый флаг о скрытии. данные берём из дефолота. для этого временно подменяем nActiveNamedSheetView
 				var _newIndex = ws.nActiveNamedSheetView;
 				ws.nActiveNamedSheetView = null;
@@ -229,6 +229,23 @@
 
 				ws.getRange3(0, 0, AscCommon.gc_nMaxRow0, 0)._foreachRowNoEmpty(function(row) {
 					row.setHidden(row.getHidden(), true);
+				});
+
+				ws.nActiveNamedSheetView = _newIndex;
+			}*/
+
+			if (ws.nActiveNamedSheetView !== null) {
+				//выставляем здесь новый флаг о скрытии. данные берём из дефолота. для этого временно подменяем nActiveNamedSheetView
+				var _newIndex = ws.nActiveNamedSheetView;
+				ws.nActiveNamedSheetView = null;
+
+				//наследуем с дефолта, если в этих строчках нет применнного фильтра
+				ws.getRange3(0, 0, AscCommon.gc_nMaxRow0, 0)._foreachRowNoEmpty(function(row) {
+					if (ws.autoFilters.containInFilter(row.index, true)) {
+						row.setHidden(false, true);
+					} else {
+						row.setHidden(row.getHidden(), true);
+					}
 				});
 
 				ws.nActiveNamedSheetView = _newIndex;
