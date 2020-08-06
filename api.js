@@ -53,9 +53,14 @@
 		var namedSheetView;
 		if (duplicateNamedSheetView) {
 			namedSheetView = duplicateNamedSheetView.clone();
-
 		} else {
-			namedSheetView = new Asc.CT_NamedSheetView();
+			//если создаём новый вью когда находимся на другом вью, клонируем аквтиный
+			var activeNamedSheetViewIndex = wsModel.getActiveNamedSheetView();
+			if (activeNamedSheetViewIndex !== null) {
+				namedSheetView = wsModel.aNamedSheetViews[activeNamedSheetViewIndex].clone();
+			} else {
+				namedSheetView = new Asc.CT_NamedSheetView();
+			}
 		}
 		namedSheetView.ws = wsModel;
 		namedSheetView.name = namedSheetView.generateName();
