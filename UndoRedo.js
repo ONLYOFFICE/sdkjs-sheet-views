@@ -87,7 +87,7 @@ function (window, undefined) {
 		sheetView: 0, from: 1, to: 2
 	};
 	UndoRedoData_NamedSheetView.prototype.getType = function () {
-		return UndoRedoDataTypes.NamedSheetView;
+		return window['AscCommonExcel'].UndoRedoDataTypes.NamedSheetViewChange;
 	};
 	UndoRedoData_NamedSheetView.prototype.getProperties = function () {
 		return this.Properties;
@@ -96,13 +96,10 @@ function (window, undefined) {
 		switch (nType) {
 			case this.Properties.sheetView:
 				return this.sheetView;
-				break;
 			case this.Properties.from:
 				return this.from;
-				break;
 			case this.Properties.to:
 				return this.to;
-				break;
 		}
 		return null;
 	};

@@ -61,11 +61,10 @@
 				History.StartTransaction();
 
 				var oldVal = t.name;
-				t.name = val;
+				t.setName(val);
 
-				/*History.Add(AscCommonExcel.g_oUndoRedoNamedSheetViews, AscCH.historyitem_NamedSheetView_SetName,
-					t.ws ? t.ws.getId() : null, null,
-					new AscCommonExcel.UndoRedoData_NamedSheetView(null, oldVal, val));*/
+				History.Add(AscCommonExcel.g_oUndoRedoNamedSheetViews, AscCH.historyitem_NamedSheetView_SetName,
+					t.ws.getId(), null, new AscCommonExcel.UndoRedoData_NamedSheetView(null, oldVal, val));
 
 				History.EndTransaction();
 
@@ -73,6 +72,11 @@
 			});
 		}
 	};
+
+	CT_NamedSheetView.prototype.setName = function (val) {
+		this.name = val;
+	};
+
 
 	CT_NamedSheetView.prototype.asc_getIsActive = function () {
 		return this._isActive;

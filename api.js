@@ -201,7 +201,7 @@
 
 			History.EndTransaction();
 
-			//TODO нужно переприменять в дальнейшем сортировкуs
+			//TODO нужно переприменять в дальнейшем сортировку
 
 			//если переходим на вью, то необходимо открыть все строки и применить фильтры
 			//если переходим на дефолт, то необходимо скрыть ещё те строки, которые в модели лежат
@@ -295,6 +295,9 @@
 		ws.handlers.trigger("selectionMathInfoChanged", ws.getSelectionMathInfo());
 	};
 
+	spreadsheet_api.prototype.initGlobalObjectsNamedSheetView = function(wbModel) {
+		AscCommonExcel.g_oUndoRedoNamedSheetViews = new AscCommonExcel.UndoRedoNamedSheetViews(wbModel);
+	};
 
 	prot["asc_addNamedSheetView"] = prot.asc_addNamedSheetView;
 	prot["asc_getNamedSheetViews"] = prot.asc_getNamedSheetViews;
