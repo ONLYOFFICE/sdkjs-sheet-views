@@ -200,7 +200,7 @@
 			History.Create_NewPoint();
 			History.StartTransaction();
 
-			History.Add(AscCommonExcel.UndoRedoWoorksheet, AscCH.historyitem_Worksheet_SetActiveNamedSheetView,
+			History.Add(AscCommonExcel.g_oUndoRedoWorksheet, AscCH.historyitem_Worksheet_SetActiveNamedSheetView,
 				ws ? ws.getId() : null, null,
 				new AscCommonExcel.UndoRedoData_FromTo(oldActiveIndex, ws.nActiveNamedSheetView), true);
 
