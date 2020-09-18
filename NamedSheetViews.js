@@ -35,6 +35,8 @@
 (function (undefined) {
 
 	var prot;
+	var asc = window["Asc"];
+	var c_oAscError = asc.c_oAscError;
 	var CT_NamedSheetView = window['Asc'].CT_NamedSheetView;
 	var CT_NsvFilter = window['Asc'].CT_NsvFilter;
 	var CT_ColumnFilter = window['Asc'].CT_ColumnFilter;
@@ -54,6 +56,7 @@
 		if (this.name !== val) {
 			api._isLockedNamedSheetView([t], function(success) {
 				if (!success) {
+					t.ws.workbook.handlers.trigger("asc_onError", c_oAscError.ID.LockedEditView, c_oAscError.Level.NoCritical);
 					return;
 				}
 

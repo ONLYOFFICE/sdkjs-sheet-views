@@ -41,6 +41,7 @@
 	prot = spreadsheet_api.prototype;
 
 	var c_oAscLockTypeElem = AscCommonExcel.c_oAscLockTypeElem;
+	var c_oAscError = asc.c_oAscError;
 
 	spreadsheet_api.prototype.asc_addNamedSheetView = function (duplicateNamedSheetView, setActive) {
 		var t = this;
@@ -67,6 +68,7 @@
 
 		this._isLockedNamedSheetView([namedSheetView], function(success) {
 			if (!success) {
+				t.handlers.trigger("asc_onError", c_oAscError.ID.LockedEditView, c_oAscError.Level.NoCritical);
 				return;
 			}
 
@@ -123,6 +125,7 @@
 
 		this._isLockedNamedSheetView(namedSheetViews, function(success) {
 			if (!success) {
+				t.handlers.trigger("asc_onError", c_oAscError.ID.LockedEditView, c_oAscError.Level.NoCritical);
 				return;
 			}
 
