@@ -170,6 +170,26 @@
 		}
 	};
 
+	spreadsheet_api.prototype._onUpdateAllSheetViewLock = function () {
+		var t = this;
+		if (t.wbModel) {
+			var i, length, wsModel, wsIndex;
+			for (i = 0, length = t.wbModel.getWorksheetCount(); i < length; ++i) {
+				wsModel = t.wbModel.getWorksheet(i);
+				wsIndex = wsModel.getIndex();
+
+				if (wsModel.aNamedSheetViews) {
+					for (var j = 0; j < wsModel.aNamedSheetViews.length; j++) {
+						var sheetView = wsModel.aNamedSheetViews[j];
+						sheetView.isLock = null;
+					}
+				}
+				this.handlers.trigger("asc_onRefreshNamedSheetViewList", wsIndex);
+				this.handlers.trigger("asc_onLockNamedSheetViewManager", wsIndex, true);
+			}
+		}
+	};
+
 	spreadsheet_api.prototype.asc_isNamedSheetViewLocked = function(index, name) {
 		var ws = this.wbModel.getWorksheet(index);
 		var sheetId = null;
