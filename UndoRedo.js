@@ -67,7 +67,7 @@ function (window, undefined) {
 		var sheetView;
 		switch (Type) {
 			case AscCH.historyitem_NamedSheetView_SetName: {
-				sheetView = ws.getNamedSheetViewByName(bUndo ? Data.to : Data.from);
+				sheetView = ws.getNamedSheetViewById(Data.sheetView);
 				if (sheetView) {
 					sheetView.setName(bUndo ? Data.from : Data.to);
 				}

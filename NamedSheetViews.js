@@ -67,7 +67,7 @@
 				t.setName(val);
 
 				History.Add(AscCommonExcel.g_oUndoRedoNamedSheetViews, AscCH.historyitem_NamedSheetView_SetName,
-					t.ws.getId(), null, new AscCommonExcel.UndoRedoData_NamedSheetView(null, oldVal, val));
+					t.ws.getId(), null, new AscCommonExcel.UndoRedoData_NamedSheetView(t.Id, oldVal, val));
 
 				History.EndTransaction();
 
@@ -173,6 +173,9 @@
 	};
 
 	CT_NamedSheetView.prototype.Write_ToBinary2 = function (writer) {
+		//for wrapper
+		writer.WriteLong(this.getObjectType());
+
 		writer.WriteLong(this.nsvFilters ? this.nsvFilters.length : 0);
 
 		if (this.nsvFilters) {
