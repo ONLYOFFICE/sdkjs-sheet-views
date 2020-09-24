@@ -117,7 +117,18 @@ function (window, undefined) {
 		}
 	};
 
+	function UndoRedoData_NamedSheetViewRedo(view, from, to) {
+		this.view = view;
+		this.from = from;
+		this.to = to;
+	}
+	UndoRedoData_NamedSheetViewRedo.prototype = Object.create(UndoRedoData_NamedSheetViewRedo.prototype);
+	UndoRedoData_NamedSheetViewRedo.prototype.Properties = {
+		view: 0, to: 2
+	};
+
 	window['AscCommonExcel'].UndoRedoNamedSheetViews = UndoRedoNamedSheetViews;
 	window['AscCommonExcel'].UndoRedoData_NamedSheetView = UndoRedoData_NamedSheetView;
+	window['AscCommonExcel'].UndoRedoData_NamedSheetViewRedo = UndoRedoData_NamedSheetViewRedo;
 
 })(window);
