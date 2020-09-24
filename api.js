@@ -145,8 +145,8 @@
 		var lockInfoArr =  [];
 		for (var i = 0; i < namedSheetViews.length; i++) {
 			var namedSheetView = namedSheetViews[i];
-			var lockInfo = this.collaborativeEditing.getLockInfo(c_oAscLockTypeElem.Object, AscCommonExcel.c_oAscLockTypeElemSubType.NamedSheetView,
-				this.asc_getActiveWorksheetId(), namedSheetView.asc_getName());
+			var lockInfo = this.collaborativeEditing.getLockInfo(c_oAscLockTypeElem.Object, null,
+				this.asc_getActiveWorksheetId(), namedSheetView.Get_Id());
 			lockInfoArr.push(lockInfo);
 		}
 		this.collaborativeEditing.lock(lockInfoArr, callback);
@@ -155,11 +155,11 @@
 	spreadsheet_api.prototype._onUpdateNamedSheetViewLock = function(lockElem) {
 		var t = this;
 
-		if (c_oAscLockTypeElem.Object === lockElem.Element["type"] && AscCommonExcel.c_oAscLockTypeElemSubType.NamedSheetView === lockElem.Element["subType"]) {
+		if (c_oAscLockTypeElem.Object === lockElem.Element["type"]) {
 			var wsModel = t.wbModel.getWorksheetById(lockElem.Element["sheetId"]);
 			if (wsModel) {
 				var wsIndex = wsModel.getIndex();
-				var sheetView = wsModel.getNamedSheetViewByName(lockElem.Element["rangeOrObjectId"]);
+				var sheetView = wsModel.getNamedSheetViewById(lockElem.Element["rangeOrObjectId"]);
 				if (sheetView) {
 					sheetView.isLock = lockElem.UserId;
 					this.handlers.trigger("asc_onRefreshNamedSheetViewList", wsIndex);
@@ -190,7 +190,7 @@
 		}
 	};
 
-	spreadsheet_api.prototype.asc_isNamedSheetViewLocked = function(index, name) {
+	spreadsheet_api.prototype.asc_isNamedSheetViewLocked = function(index, id) {
 		var ws = this.wbModel.getWorksheet(index);
 		var sheetId = null;
 		if (null === ws || undefined === ws) {
@@ -199,7 +199,7 @@
 			sheetId = ws.getId();
 		}
 
-		var lockInfo = this.collaborativeEditing.getLockInfo(c_oAscLockTypeElem.Object, AscCommonExcel.c_oAscLockTypeElemSubType.NamedSheetView, sheetId, name);
+		var lockInfo = this.collaborativeEditing.getLockInfo(c_oAscLockTypeElem.Object, null, sheetId, id);
 		return (false !== this.collaborativeEditing.getLockIntersection(lockInfo, c_oAscLockTypes.kLockTypeOther, /*bCheckOnlyLockAll*/false));
 	};
 
