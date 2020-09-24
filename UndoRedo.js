@@ -126,6 +126,36 @@ function (window, undefined) {
 	UndoRedoData_NamedSheetViewRedo.prototype.Properties = {
 		view: 0, to: 2
 	};
+	UndoRedoData_NamedSheetViewRedo.prototype.getType = function () {
+		return window['AscCommonExcel'].UndoRedoDataTypes.NamedSheetViewRedo;
+	};
+	UndoRedoData_NamedSheetViewRedo.prototype.getProperties = function () {
+		return this.Properties;
+	};
+	UndoRedoData_NamedSheetViewRedo.prototype.getProperty = function (nType) {
+		switch (nType) {
+			case this.Properties.view:
+				return this.view;
+			case this.Properties.from:
+				return this.from;
+			case this.Properties.to:
+				return this.to;
+		}
+		return null;
+	};
+	UndoRedoData_NamedSheetViewRedo.prototype.setProperty = function (nType, value) {
+		switch (nType) {
+			case this.Properties.view:
+				this.view = value;
+				break;
+			case this.Properties.from:
+				this.from = value;
+				break;
+			case this.Properties.to:
+				this.to = value;
+				break;
+		}
+	};
 
 	window['AscCommonExcel'].UndoRedoNamedSheetViews = UndoRedoNamedSheetViews;
 	window['AscCommonExcel'].UndoRedoData_NamedSheetView = UndoRedoData_NamedSheetView;
