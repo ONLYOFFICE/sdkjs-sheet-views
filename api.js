@@ -223,23 +223,23 @@
 		}
 		var ws = this.wbModel.getWorksheet(index);
 
-		var oldActiveIndex = ws.nActiveNamedSheetView;
-		ws.nActiveNamedSheetView = null;
+		var oldActiveId = ws.activeNamedSheetViewId;
+		ws.activeNamedSheetViewId = null;
 		for (var i = 0; i < ws.aNamedSheetViews.length; i++) {
 			if (name === ws.aNamedSheetViews[i].name) {
-				ws.nActiveNamedSheetView = i;
+				ws.activeNamedSheetViewId = ws.aNamedSheetViews[i].Id;
 				ws.aNamedSheetViews[i]._isActive = true;
 			} else {
 				ws.aNamedSheetViews[i]._isActive = false;
 			}
 		}
-		if (oldActiveIndex !== ws.nActiveNamedSheetView) {
+		if (oldActiveId !== ws.activeNamedSheetViewId) {
 			History.Create_NewPoint();
 			History.StartTransaction();
 
 			History.Add(AscCommonExcel.g_oUndoRedoWorksheet, AscCH.historyitem_Worksheet_SetActiveNamedSheetView,
 				ws ? ws.getId() : null, null,
-				new AscCommonExcel.UndoRedoData_FromTo(oldActiveIndex, ws.nActiveNamedSheetView), true);
+				new AscCommonExcel.UndoRedoData_FromTo(oldActiveId, ws.activeNamedSheetViewId), true);
 
 			History.EndTransaction();
 
@@ -271,10 +271,10 @@
 				ws.nActiveNamedSheetView = _newIndex;
 			}*/
 
-			if (ws.nActiveNamedSheetView !== null) {
+			if (ws.activeNamedSheetViewId !== null) {
 				//выставляем здесь новый флаг о скрытии. данные берём из дефолота. для этого временно подменяем nActiveNamedSheetView
-				var _newIndex = ws.nActiveNamedSheetView;
-				ws.nActiveNamedSheetView = null;
+				var _newId = ws.activeNamedSheetViewId;
+				ws.activeNamedSheetViewId = null;
 
 				//наследуем с дефолта, если в этих строчках нет применнного фильтра
 				ws.getRange3(0, 0, AscCommon.gc_nMaxRow0, 0)._foreachRowNoEmpty(function(row) {
@@ -285,11 +285,11 @@
 					}
 				});
 
-				ws.nActiveNamedSheetView = _newIndex;
+				ws.activeNamedSheetViewId = _newId;
 			}
 
 
-			ws.autoFilters.reapplyAllFilters(true, ws.nActiveNamedSheetView !== null);
+			ws.autoFilters.reapplyAllFilters(true, ws.activeNamedSheetViewId !== null);
 
 			this.updateAllFilters();
 
