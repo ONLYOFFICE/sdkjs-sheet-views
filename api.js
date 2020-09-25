@@ -204,19 +204,6 @@
 		return this.sheetViewManagerLocks[id];
 	};
 
-	spreadsheet_api.prototype.asc_isNamedSheetViewLocked = function(index, id) {
-		var ws = this.wbModel.getWorksheet(index);
-		var sheetId = null;
-		if (null === ws || undefined === ws) {
-			sheetId = this.asc_getActiveWorksheetId();
-		} else {
-			sheetId = ws.getId();
-		}
-
-		var lockInfo = this.collaborativeEditing.getLockInfo(c_oAscLockTypeElem.Object, null, sheetId, id);
-		return (false !== this.collaborativeEditing.getLockIntersection(lockInfo, c_oAscLockTypes.kLockTypeOther, /*bCheckOnlyLockAll*/false));
-	};
-
 	spreadsheet_api.prototype.asc_setActiveNamedSheetView = function(name, index) {
 		if (index === undefined) {
 			index = this.wbModel.getActive();
