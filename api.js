@@ -64,9 +64,9 @@
 			namedSheetView = duplicateNamedSheetView.clone();
 		} else {
 			//если создаём новый вью когда находимся на другом вью, клонируем аквтиный
-			var activeNamedSheetViewIndex = wsModel.getActiveNamedSheetView();
-			if (activeNamedSheetViewIndex !== null) {
-				namedSheetView = wsModel.aNamedSheetViews[activeNamedSheetViewIndex].clone();
+			var activeNamedSheetViewId = wsModel.getActiveNamedSheetViewId();
+			if (activeNamedSheetViewId !== null) {
+				namedSheetView = wsModel.getNamedSheetViewById(activeNamedSheetViewId).clone();
 			} else {
 				namedSheetView = new Asc.CT_NamedSheetView();
 			}
@@ -112,9 +112,9 @@
 			return null;
 		}
 
-		var activeNamedSheetViewIndex = ws.getActiveNamedSheetView();
-		if (activeNamedSheetViewIndex !== null) {
-			var activeNamedSheetView = ws.aNamedSheetViews ? ws.aNamedSheetViews[activeNamedSheetViewIndex] : null;
+		var activeNamedSheetViewId = ws.getActiveNamedSheetViewId();
+		if (activeNamedSheetViewId !== null) {
+			var activeNamedSheetView = ws.getNamedSheetViewById(activeNamedSheetViewId);
 			if (activeNamedSheetView) {
 				return activeNamedSheetView.name;
 			}
@@ -223,23 +223,23 @@
 		}
 		var ws = this.wbModel.getWorksheet(index);
 
-		var oldActiveId = ws.activeNamedSheetViewId;
-		ws.activeNamedSheetViewId = null;
+		var oldActiveId = ws.getActiveNamedSheetViewId();
+		ws.setActiveNamedSheetView(null);
 		for (var i = 0; i < ws.aNamedSheetViews.length; i++) {
 			if (name === ws.aNamedSheetViews[i].name) {
-				ws.activeNamedSheetViewId = ws.aNamedSheetViews[i].Id;
+				ws.setActiveNamedSheetView(ws.aNamedSheetViews[i].Id);
 				ws.aNamedSheetViews[i]._isActive = true;
 			} else {
 				ws.aNamedSheetViews[i]._isActive = false;
 			}
 		}
-		if (oldActiveId !== ws.activeNamedSheetViewId) {
+		if (oldActiveId !== ws.getActiveNamedSheetViewId()) {
 			History.Create_NewPoint();
 			History.StartTransaction();
 
 			History.Add(AscCommonExcel.g_oUndoRedoWorksheet, AscCH.historyitem_Worksheet_SetActiveNamedSheetView,
 				ws ? ws.getId() : null, null,
-				new AscCommonExcel.UndoRedoData_FromTo(oldActiveId, ws.activeNamedSheetViewId), true);
+				new AscCommonExcel.UndoRedoData_FromTo(oldActiveId, ws.getActiveNamedSheetViewId()), true);
 
 			History.EndTransaction();
 
@@ -271,10 +271,10 @@
 				ws.nActiveNamedSheetView = _newIndex;
 			}*/
 
-			if (ws.activeNamedSheetViewId !== null) {
+			if (ws.getActiveNamedSheetViewId() !== null) {
 				//выставляем здесь новый флаг о скрытии. данные берём из дефолота. для этого временно подменяем nActiveNamedSheetView
-				var _newId = ws.activeNamedSheetViewId;
-				ws.activeNamedSheetViewId = null;
+				var _newId = ws.getActiveNamedSheetViewId();
+				ws.setActiveNamedSheetView(null);
 
 				//наследуем с дефолта, если в этих строчках нет применнного фильтра
 				ws.getRange3(0, 0, AscCommon.gc_nMaxRow0, 0)._foreachRowNoEmpty(function(row) {
@@ -285,11 +285,11 @@
 					}
 				});
 
-				ws.activeNamedSheetViewId = _newId;
+				ws.setActiveNamedSheetView(_newId);
 			}
 
 
-			ws.autoFilters.reapplyAllFilters(true, ws.activeNamedSheetViewId !== null);
+			ws.autoFilters.reapplyAllFilters(true, ws.getActiveNamedSheetViewId() !== null);
 
 			this.updateAllFilters();
 
