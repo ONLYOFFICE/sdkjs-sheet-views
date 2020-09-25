@@ -43,11 +43,19 @@
 	var c_oAscLockTypeElem = AscCommonExcel.c_oAscLockTypeElem;
 	var c_oAscError = asc.c_oAscError;
 
+	//TODO временно положил в прототип. перенести!
+	spreadsheet_api.prototype.sheetViewManagerLocks = [];
+
 	spreadsheet_api.prototype.asc_addNamedSheetView = function (duplicateNamedSheetView, setActive) {
 		var t = this;
 		var ws = this.wb && this.wb.getWorksheet();
 		var wsModel = ws ? ws.model : null;
 		if (!wsModel) {
+			return;
+		}
+
+		if (this.isNamedSheetViewManagerLocked(wsModel.Id)) {
+			t.handlers.trigger("asc_onError", c_oAscError.ID.LockedEditView, c_oAscError.Level.NoCritical);
 			return;
 		}
 
@@ -165,7 +173,8 @@
 					this.handlers.trigger("asc_onRefreshNamedSheetViewList", wsIndex);
 				}
 
-				this.handlers.trigger("asc_onLockNamedSheetViewManager", wsIndex, true);
+				this.sheetViewManagerLocks[wsModel.Id] = true;
+				//this.handlers.trigger("asc_onLockNamedSheetViewManager", wsIndex, true);
 			}
 		}
 	};
@@ -185,9 +194,14 @@
 					}
 				}
 				this.handlers.trigger("asc_onRefreshNamedSheetViewList", wsIndex);
-				this.handlers.trigger("asc_onLockNamedSheetViewManager", wsIndex, true);
+				this.sheetViewManagerLocks[wsModel.Id] = false;
+				//this.handlers.trigger("asc_onLockNamedSheetViewManager", wsIndex, false);
 			}
 		}
+	};
+
+	spreadsheet_api.prototype.isNamedSheetViewManagerLocked = function (id) {
+		return this.sheetViewManagerLocks[id];
 	};
 
 	spreadsheet_api.prototype.asc_isNamedSheetViewLocked = function(index, id) {

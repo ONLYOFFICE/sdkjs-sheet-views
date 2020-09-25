@@ -54,6 +54,11 @@
 		var t = this;
 		var api = window["Asc"]["editor"];
 		if (this.name !== val) {
+			if (api.isNamedSheetViewManagerLocked(t.ws.getId())) {
+				t.ws.workbook.handlers.trigger("asc_onError", c_oAscError.ID.LockedEditView, c_oAscError.Level.NoCritical);
+				return;
+			}
+
 			api._isLockedNamedSheetView([t], function(success) {
 				if (!success) {
 					t.ws.workbook.handlers.trigger("asc_onError", c_oAscError.ID.LockedEditView, c_oAscError.Level.NoCritical);
