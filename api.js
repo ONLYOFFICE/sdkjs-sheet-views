@@ -271,18 +271,20 @@
 			if (ws.getActiveNamedSheetViewId() !== null) {
 				//выставляем здесь новый флаг о скрытии. данные берём из дефолота. для этого временно подменяем nActiveNamedSheetView
 				var _newId = ws.getActiveNamedSheetViewId();
-				ws.setActiveNamedSheetView(null);
+				//ws.setActiveNamedSheetView(null);
 
-				//наследуем с дефолта, если в этих строчках нет применнного фильтра
+				//чтобы не усложнять логику решил не наследовать внутри а/ф скрытые строки от дефолта
+				//просто отрываем все строки, а далее применяем те, что скрыты во вью
 				ws.getRange3(0, 0, AscCommon.gc_nMaxRow0, 0)._foreachRowNoEmpty(function(row) {
-					if (ws.autoFilters.containInFilter(row.index, true)) {
+					if (ws.autoFilters.containInFilter(row.index/*, true*/)) {
 						row.setHidden(false, true);
-					} else {
-						row.setHidden(row.getHidden(), true);
-					}
+					} /*else {
+						//наследуем с дефолта, если в этих строчках нет применнного фильтра
+						row.setHidden(row.getHidden(false), true);
+					}*/
 				});
 
-				ws.setActiveNamedSheetView(_newId);
+				//ws.setActiveNamedSheetView(_newId);
 			}
 
 			ws.autoFilters.forEachTables(function (table) {
