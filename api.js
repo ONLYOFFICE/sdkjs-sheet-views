@@ -209,6 +209,16 @@
 			index = this.wbModel.getActive();
 		}
 		var ws = this.wbModel.getWorksheet(index);
+		
+		//при переходе между вью - hidden manager не обновляется.
+		var changedHiddenRowsArr = [];
+		ws.autoFilters.forEachTables(function (table) {
+			for (var i = table.Ref.r1; i < table.Ref.r2; i++) {
+				ws._getRowNoEmpty(i, function(row){
+					changedHiddenRowsArr[row.index] = row.getHidden();
+				});
+			}
+		});
 
 		var oldActiveId = ws.getActiveNamedSheetViewId();
 		ws.setActiveNamedSheetView(null);
@@ -275,6 +285,15 @@
 				ws.setActiveNamedSheetView(_newId);
 			}
 
+			ws.autoFilters.forEachTables(function (table) {
+				for (var i = table.Ref.r1; i < table.Ref.r2; i++) {
+					ws._getRowNoEmpty(i, function(row){
+						if (row.index >= 0 && (!row.getHidden() !== !changedHiddenRowsArr[row.index])) {
+							row.ws.hiddenManager.addHidden(true, row.index);
+						}
+					});
+				}
+			});
 
 			ws.autoFilters.reapplyAllFilters(true, ws.getActiveNamedSheetViewId() !== null);
 
