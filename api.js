@@ -272,7 +272,7 @@
 			ws.autoFilters.forEachTables(function (table) {
 				for (var i = table.Ref.r1; i < table.Ref.r2; i++) {
 					ws._getRowNoEmpty(i, function(row){
-						if (row.index >= 0 && (!row.getHidden() !== !changedHiddenRowsArr[row.index])) {
+						if (row && row.index >= 0 && (!row.getHidden() !== !changedHiddenRowsArr[row.index])) {
 							row.ws.hiddenManager.addHidden(true, row.index);
 						}
 					});
