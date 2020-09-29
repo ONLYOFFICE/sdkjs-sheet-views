@@ -174,7 +174,6 @@
 				}
 
 				this.sheetViewManagerLocks[wsModel.Id] = true;
-				//this.handlers.trigger("asc_onLockNamedSheetViewManager", wsIndex, true);
 			}
 		}
 	};
@@ -195,7 +194,6 @@
 				}
 				this.handlers.trigger("asc_onRefreshNamedSheetViewList", wsIndex);
 				this.sheetViewManagerLocks[wsModel.Id] = false;
-				//this.handlers.trigger("asc_onLockNamedSheetViewManager", wsIndex, false);
 			}
 		}
 	};
@@ -215,7 +213,9 @@
 		ws.autoFilters.forEachTables(function (table) {
 			for (var i = table.Ref.r1; i < table.Ref.r2; i++) {
 				ws._getRowNoEmpty(i, function(row){
-					changedHiddenRowsArr[row.index] = row.getHidden();
+					if (row) {
+						changedHiddenRowsArr[row.index] = row.getHidden();
+					}
 				});
 			}
 		});
@@ -255,24 +255,8 @@
 			//вне а/ф - старый флаг
 			//при переходе из дефолта внутри а/ф(к которому не применен фильтр) наследуем флаг об скрытии/открытии ячеек
 			//для этого прохожусь по всем строкам - и наследую флаг
-			/*if (oldActiveIndex === null) {
-				//выставляем здесь новый флаг о скрытии. данные берём из дефолота. для этого временно подменяем nActiveNamedSheetView
-				var _newIndex = ws.nActiveNamedSheetView;
-				ws.nActiveNamedSheetView = null;
-
-
-				ws.getRange3(0, 0, AscCommon.gc_nMaxRow0, 0)._foreachRowNoEmpty(function(row) {
-					row.setHidden(row.getHidden(), true);
-				});
-
-				ws.nActiveNamedSheetView = _newIndex;
-			}*/
 
 			if (ws.getActiveNamedSheetViewId() !== null) {
-				//выставляем здесь новый флаг о скрытии. данные берём из дефолота. для этого временно подменяем nActiveNamedSheetView
-				var _newId = ws.getActiveNamedSheetViewId();
-				//ws.setActiveNamedSheetView(null);
-
 				//чтобы не усложнять логику решил не наследовать внутри а/ф скрытые строки от дефолта
 				//просто отрываем все строки, а далее применяем те, что скрыты во вью
 				ws.getRange3(0, 0, AscCommon.gc_nMaxRow0, 0)._foreachRowNoEmpty(function(row) {
@@ -283,8 +267,6 @@
 						row.setHidden(row.getHidden(false), true);
 					}*/
 				});
-
-				//ws.setActiveNamedSheetView(_newId);
 			}
 
 			ws.autoFilters.forEachTables(function (table) {
@@ -298,9 +280,7 @@
 			});
 
 			ws.autoFilters.reapplyAllFilters(true, ws.getActiveNamedSheetViewId() !== null);
-
 			this.updateAllFilters();
-
 			this.handlers.trigger("asc_onRefreshNamedSheetViewList", index);
 		}
 	};
