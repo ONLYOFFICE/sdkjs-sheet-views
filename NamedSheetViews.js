@@ -185,8 +185,10 @@
 			}
 
 			if (isDelete) {
+				var historyFilter = this.nsvFilters[i].clone();
 				this.nsvFilters.splice(i, 1);
-				//TODO history
+				History.Add(AscCommonExcel.g_oUndoRedoNamedSheetViews, AscCH.historyitem_NamedSheetView_DeleteFilter,
+					this.ws.getId(), null, new AscCommonExcel.UndoRedoData_NamedSheetViewRedo(this.Id, historyFilter, null));
 				break;
 			}
 		}

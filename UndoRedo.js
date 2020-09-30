@@ -73,6 +73,13 @@ function (window, undefined) {
 				}
 				break;
 			}
+			case AscCH.historyitem_NamedSheetView_DeleteFilter: {
+				sheetView = ws.getNamedSheetViewById(Data.sheetView);
+				if (sheetView && bUndo) {
+					sheetView.nsvFilters.push(Data.from);
+				}
+				break;
+			}
 		}
 
 	};
