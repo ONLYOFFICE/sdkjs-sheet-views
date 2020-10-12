@@ -80,15 +80,15 @@
 				return;
 			}
 
-			History.Create_NewPoint();
-			History.StartTransaction();
+			AscCommon.History.Create_NewPoint();
+			AscCommon.History.StartTransaction();
 			wsModel.addNamedSheetView(namedSheetView, !!duplicateNamedSheetView);
 
 			if (setActive) {
 				t.asc_setActiveNamedSheetView(namedSheetView.name);
 			}
 
-			History.EndTransaction();
+			AscCommon.History.EndTransaction();
 
 			if (!setActive) {
 				t.handlers.trigger("asc_onRefreshNamedSheetViewList", wsModel.index);
@@ -137,10 +137,10 @@
 				return;
 			}
 
-			History.Create_NewPoint();
-			History.StartTransaction();
+			AscCommon.History.Create_NewPoint();
+			AscCommon.History.StartTransaction();
 			wsModel.deleteNamedSheetViews(namedSheetViews);
-			History.EndTransaction();
+			AscCommon.History.EndTransaction();
 
 			t.handlers.trigger("asc_onRefreshNamedSheetViewList", wsModel.index);
 		});
@@ -231,14 +231,14 @@
 			}
 		}
 		if (oldActiveId !== ws.getActiveNamedSheetViewId()) {
-			History.Create_NewPoint();
-			History.StartTransaction();
+			AscCommon.History.Create_NewPoint();
+			AscCommon.History.StartTransaction();
 
-			History.Add(AscCommonExcel.g_oUndoRedoWorksheet, AscCH.historyitem_Worksheet_SetActiveNamedSheetView,
+			AscCommon.History.Add(AscCommonExcel.g_oUndoRedoWorksheet, AscCH.historyitem_Worksheet_SetActiveNamedSheetView,
 				ws ? ws.getId() : null, null,
 				new AscCommonExcel.UndoRedoData_FromTo(oldActiveId, ws.getActiveNamedSheetViewId()), true);
 
-			History.EndTransaction();
+			AscCommon.History.EndTransaction();
 
 			//TODO нужно переприменять в дальнейшем сортировку
 
