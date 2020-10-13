@@ -71,6 +71,7 @@
 	var CT_NsvFilter = window['Asc'].CT_NsvFilter;
 	var CT_ColumnFilter = window['Asc'].CT_ColumnFilter;
 	var CT_SortRule = window['Asc'].CT_SortRule;
+	var History = AscCommon.History;
 
 	if (!CT_NamedSheetView || !CT_NsvFilter || !CT_ColumnFilter || !CT_SortRule) {
 		return;
