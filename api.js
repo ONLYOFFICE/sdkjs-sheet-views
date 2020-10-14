@@ -67,6 +67,7 @@
 			var activeNamedSheetViewId = wsModel.getActiveNamedSheetViewId();
 			if (activeNamedSheetViewId !== null) {
 				namedSheetView = wsModel.getNamedSheetViewById(activeNamedSheetViewId).clone();
+				namedSheetView.name = null;
 			} else {
 				namedSheetView = new Asc.CT_NamedSheetView();
 			}
