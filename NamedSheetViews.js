@@ -318,6 +318,7 @@
 
 	prot = CT_NamedSheetView.prototype;
 	prot["asc_getName"] = prot.asc_getName;
+	prot["asc_setName"] = prot.asc_setName;
 	prot["asc_getIsActive"] = prot.asc_getIsActive;
 	prot["asc_setIsActive"] = prot.asc_setIsActive;
 	prot["asc_getIsLock"] = prot.asc_getIsLock;
