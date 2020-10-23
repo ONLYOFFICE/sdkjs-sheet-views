@@ -223,7 +223,7 @@
 		}
 
 		writer.WriteString2(this.name);
-		writer.WriteLong(this.id);
+		writer.WriteString2(this.id);
 	};
 
 	CT_NsvFilter.prototype.Write_ToBinary2 = function (writer) {
