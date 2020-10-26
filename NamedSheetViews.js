@@ -244,7 +244,7 @@
 			}
 		}
 
-		writer.WriteLong(this.filterId);
+		writer.WriteString2(this.filterId);
 
 		if (null != this.Ref) {
 			writer.WriteBool(true);

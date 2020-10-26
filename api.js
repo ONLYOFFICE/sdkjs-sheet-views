@@ -66,6 +66,7 @@
 			//если создаём новый вью когда находимся на другом вью, клонируем аквтиный
 			var activeNamedSheetViewId = wsModel.getActiveNamedSheetViewId();
 			if (activeNamedSheetViewId !== null) {
+				duplicateNamedSheetView = true;
 				namedSheetView = wsModel.getNamedSheetViewById(activeNamedSheetViewId).clone();
 				namedSheetView.name = null;
 			} else {
