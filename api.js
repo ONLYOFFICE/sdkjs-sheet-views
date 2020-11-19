@@ -212,7 +212,9 @@
 		
 		//при переходе между вью - hidden manager не обновляется.
 		var changedHiddenRowsArr = [];
+		var historyUpdateRange = new asc.Range(0, 0, 0, 0);
 		ws.autoFilters.forEachTables(function (table) {
+			historyUpdateRange.union2(table.Ref);
 			for (var i = table.Ref.r1; i < table.Ref.r2; i++) {
 				ws._getRowNoEmpty(i, function(row){
 					if (row) {
@@ -236,8 +238,12 @@
 			AscCommon.History.Create_NewPoint();
 			AscCommon.History.StartTransaction();
 
+			if (ws.AutoFilter && ws.AutoFilter.Ref) {
+				historyUpdateRange.union2(ws.AutoFilter.Ref);
+			}
+
 			AscCommon.History.Add(AscCommonExcel.g_oUndoRedoWorksheet, AscCH.historyitem_Worksheet_SetActiveNamedSheetView,
-				ws ? ws.getId() : null, null,
+				ws ? ws.getId() : null, historyUpdateRange,
 				new AscCommonExcel.UndoRedoData_FromTo(oldActiveId, ws.getActiveNamedSheetViewId()), true);
 
 			AscCommon.History.EndTransaction();
