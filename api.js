@@ -213,6 +213,8 @@
 		//при переходе между вью - hidden manager не обновляется.
 		var changedHiddenRowsArr = [];
 		var historyUpdateRange = new asc.Range(0, 0, 0, 0);
+		var i;
+
 		ws.autoFilters.forEachTables(function (table) {
 			historyUpdateRange.union2(table.Ref);
 			for (var i = table.Ref.r1; i < table.Ref.r2; i++) {
@@ -223,10 +225,19 @@
 				});
 			}
 		});
+		if (ws.AutoFilter && ws.AutoFilter.Ref) {
+			for (i = ws.AutoFilter.Ref.r1; i < ws.AutoFilter.Ref.r2; i++) {
+				ws._getRowNoEmpty(i, function(row){
+					if (row) {
+						changedHiddenRowsArr[row.index] = row.getHidden();
+					}
+				});
+			}
+		}
 
 		var oldActiveId = ws.getActiveNamedSheetViewId();
 		ws.setActiveNamedSheetView(null);
-		for (var i = 0; i < ws.aNamedSheetViews.length; i++) {
+		for (i = 0; i < ws.aNamedSheetViews.length; i++) {
 			if (name === ws.aNamedSheetViews[i].name) {
 				ws.setActiveNamedSheetView(ws.aNamedSheetViews[i].Id);
 				ws.aNamedSheetViews[i]._isActive = true;
@@ -277,15 +288,26 @@
 				});
 			}
 
+			var _changeHiddenManager = function (_row) {
+				if (_row && _row.index >= 0 && (!_row.getHidden() !== !changedHiddenRowsArr[_row.index])) {
+					ws.hiddenManager.addHidden(true, _row.index);
+				}
+			};
+
 			ws.autoFilters.forEachTables(function (table) {
 				for (var i = table.Ref.r1; i < table.Ref.r2; i++) {
 					ws._getRowNoEmpty(i, function(row){
-						if (row && row.index >= 0 && (!row.getHidden() !== !changedHiddenRowsArr[row.index])) {
-							row.ws.hiddenManager.addHidden(true, row.index);
-						}
+						_changeHiddenManager(row);
 					});
 				}
 			});
+			if (ws.AutoFilter && ws.AutoFilter.Ref) {
+				for (i = ws.AutoFilter.Ref.r1; i < ws.AutoFilter.Ref.r2; i++) {
+					ws._getRowNoEmpty(i, function(row){
+						_changeHiddenManager(row);
+					});
+				}
+			}
 
 			var wsView = this.wb.getWorksheet(ws.index, true);
 			wsView.objectRender.rebuildChartGraphicObjects([historyUpdateRange]);
