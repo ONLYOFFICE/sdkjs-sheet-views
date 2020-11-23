@@ -287,6 +287,8 @@
 				}
 			});
 
+			var wsView = this.wb.getWorksheet(ws.index, true);
+			wsView.objectRender.rebuildChartGraphicObjects([historyUpdateRange]);
 			ws.autoFilters.reapplyAllFilters(true, ws.getActiveNamedSheetViewId() !== null);
 			this.updateAllFilters();
 			this.handlers.trigger("asc_onRefreshNamedSheetViewList", index);
