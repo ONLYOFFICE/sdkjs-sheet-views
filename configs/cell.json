@@ -1,0 +1,11 @@
+{
+  "sdk": {
+    "min": [
+      "api.js"
+    ],
+    "common": [
+      "NamedSheetViews.js",
+      "UndoRedo.js"
+    ]
+  }
+}
