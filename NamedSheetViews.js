@@ -71,6 +71,7 @@
 	var CT_NsvFilter = window['Asc'].CT_NsvFilter;
 	var CT_ColumnFilter = window['Asc'].CT_ColumnFilter;
 	var CT_SortRule = window['Asc'].CT_SortRule;
+	var History = AscCommon.History;
 
 	if (!CT_NamedSheetView || !CT_NsvFilter || !CT_ColumnFilter || !CT_SortRule) {
 		return;
@@ -222,7 +223,7 @@
 		}
 
 		writer.WriteString2(this.name);
-		writer.WriteLong(this.id);
+		writer.WriteString2(this.id);
 	};
 
 	CT_NsvFilter.prototype.Write_ToBinary2 = function (writer) {
@@ -243,7 +244,7 @@
 			}
 		}
 
-		writer.WriteLong(this.filterId);
+		writer.WriteString2(this.filterId);
 
 		if (null != this.Ref) {
 			writer.WriteBool(true);
@@ -317,6 +318,7 @@
 
 	prot = CT_NamedSheetView.prototype;
 	prot["asc_getName"] = prot.asc_getName;
+	prot["asc_setName"] = prot.asc_setName;
 	prot["asc_getIsActive"] = prot.asc_getIsActive;
 	prot["asc_setIsActive"] = prot.asc_setIsActive;
 	prot["asc_getIsLock"] = prot.asc_getIsLock;
