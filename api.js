@@ -66,7 +66,9 @@
 			//если создаём новый вью когда находимся на другом вью, клонируем аквтиный
 			var activeNamedSheetViewId = wsModel.getActiveNamedSheetViewId();
 			if (activeNamedSheetViewId !== null) {
+				duplicateNamedSheetView = true;
 				namedSheetView = wsModel.getNamedSheetViewById(activeNamedSheetViewId).clone();
+				namedSheetView.name = null;
 			} else {
 				namedSheetView = new Asc.CT_NamedSheetView();
 			}
@@ -80,15 +82,15 @@
 				return;
 			}
 
-			History.Create_NewPoint();
-			History.StartTransaction();
+			AscCommon.History.Create_NewPoint();
+			AscCommon.History.StartTransaction();
 			wsModel.addNamedSheetView(namedSheetView, !!duplicateNamedSheetView);
 
 			if (setActive) {
 				t.asc_setActiveNamedSheetView(namedSheetView.name);
 			}
 
-			History.EndTransaction();
+			AscCommon.History.EndTransaction();
 
 			if (!setActive) {
 				t.handlers.trigger("asc_onRefreshNamedSheetViewList", wsModel.index);
@@ -137,10 +139,10 @@
 				return;
 			}
 
-			History.Create_NewPoint();
-			History.StartTransaction();
+			AscCommon.History.Create_NewPoint();
+			AscCommon.History.StartTransaction();
 			wsModel.deleteNamedSheetViews(namedSheetViews);
-			History.EndTransaction();
+			AscCommon.History.EndTransaction();
 
 			t.handlers.trigger("asc_onRefreshNamedSheetViewList", wsModel.index);
 		});
@@ -210,7 +212,11 @@
 		
 		//при переходе между вью - hidden manager не обновляется.
 		var changedHiddenRowsArr = [];
+		var historyUpdateRange = new asc.Range(0, 0, 0, 0);
+		var i;
+
 		ws.autoFilters.forEachTables(function (table) {
+			historyUpdateRange.union2(table.Ref);
 			for (var i = table.Ref.r1; i < table.Ref.r2; i++) {
 				ws._getRowNoEmpty(i, function(row){
 					if (row) {
@@ -219,10 +225,19 @@
 				});
 			}
 		});
+		if (ws.AutoFilter && ws.AutoFilter.Ref) {
+			for (i = ws.AutoFilter.Ref.r1; i < ws.AutoFilter.Ref.r2; i++) {
+				ws._getRowNoEmpty(i, function(row){
+					if (row) {
+						changedHiddenRowsArr[row.index] = row.getHidden();
+					}
+				});
+			}
+		}
 
 		var oldActiveId = ws.getActiveNamedSheetViewId();
 		ws.setActiveNamedSheetView(null);
-		for (var i = 0; i < ws.aNamedSheetViews.length; i++) {
+		for (i = 0; i < ws.aNamedSheetViews.length; i++) {
 			if (name === ws.aNamedSheetViews[i].name) {
 				ws.setActiveNamedSheetView(ws.aNamedSheetViews[i].Id);
 				ws.aNamedSheetViews[i]._isActive = true;
@@ -231,14 +246,18 @@
 			}
 		}
 		if (oldActiveId !== ws.getActiveNamedSheetViewId()) {
-			History.Create_NewPoint();
-			History.StartTransaction();
+			AscCommon.History.Create_NewPoint();
+			AscCommon.History.StartTransaction();
 
-			History.Add(AscCommonExcel.g_oUndoRedoWorksheet, AscCH.historyitem_Worksheet_SetActiveNamedSheetView,
-				ws ? ws.getId() : null, null,
+			if (ws.AutoFilter && ws.AutoFilter.Ref) {
+				historyUpdateRange.union2(ws.AutoFilter.Ref);
+			}
+
+			AscCommon.History.Add(AscCommonExcel.g_oUndoRedoWorksheet, AscCH.historyitem_Worksheet_SetActiveNamedSheetView,
+				ws ? ws.getId() : null, historyUpdateRange,
 				new AscCommonExcel.UndoRedoData_FromTo(oldActiveId, ws.getActiveNamedSheetViewId()), true);
 
-			History.EndTransaction();
+			AscCommon.History.EndTransaction();
 
 			//TODO нужно переприменять в дальнейшем сортировку
 
@@ -269,16 +288,29 @@
 				});
 			}
 
+			var _changeHiddenManager = function (_row) {
+				if (_row && _row.index >= 0 && (!_row.getHidden() !== !changedHiddenRowsArr[_row.index])) {
+					ws.hiddenManager.addHidden(true, _row.index);
+				}
+			};
+
 			ws.autoFilters.forEachTables(function (table) {
 				for (var i = table.Ref.r1; i < table.Ref.r2; i++) {
 					ws._getRowNoEmpty(i, function(row){
-						if (row && row.index >= 0 && (!row.getHidden() !== !changedHiddenRowsArr[row.index])) {
-							row.ws.hiddenManager.addHidden(true, row.index);
-						}
+						_changeHiddenManager(row);
 					});
 				}
 			});
+			if (ws.AutoFilter && ws.AutoFilter.Ref) {
+				for (i = ws.AutoFilter.Ref.r1; i < ws.AutoFilter.Ref.r2; i++) {
+					ws._getRowNoEmpty(i, function(row){
+						_changeHiddenManager(row);
+					});
+				}
+			}
 
+			var wsView = this.wb.getWorksheet(ws.index, true);
+			wsView.objectRender.rebuildChartGraphicObjects([historyUpdateRange]);
 			ws.autoFilters.reapplyAllFilters(true, ws.getActiveNamedSheetViewId() !== null);
 			this.updateAllFilters();
 			this.handlers.trigger("asc_onRefreshNamedSheetViewList", index);
