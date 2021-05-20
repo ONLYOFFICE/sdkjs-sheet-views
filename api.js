@@ -309,9 +309,9 @@
 				}
 			}
 
-			var wsView = this.wb.getWorksheet(ws.index, true);
-			wsView.objectRender.rebuildChartGraphicObjects([historyUpdateRange]);
-			ws.autoFilters.reapplyAllFilters(true, ws.getActiveNamedSheetViewId() !== null);
+			var oRange = new AscCommonExcel.Range(ws, historyUpdateRange.r1, historyUpdateRange.c1, historyUpdateRange.r2, historyUpdateRange.c2);
+			this.wb.handleChartsOnWorkbookChange([oRange]);
+			ws.autoFilters.reapplyAllFilters(true, ws.getActiveNamedSheetViewId() !== null, null, true);
 			this.updateAllFilters();
 			this.handlers.trigger("asc_onRefreshNamedSheetViewList", index);
 		}
